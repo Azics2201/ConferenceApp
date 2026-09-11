@@ -8,7 +8,7 @@ export default function CheckboxRow({ label, checked, onPress, style }) {
       <Ionicons
         name={checked ? 'checkbox' : 'square-outline'}
         size={22}
-        color={checked ? '#4F46E5' : '#9CA3AF'}
+        color={checked ? '#4D92CF' : '#9CA3AF'}
       />
       <Text style={styles.label}>{label}</Text>
     </TouchableOpacity>

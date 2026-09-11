@@ -38,12 +38,12 @@ export default function AnnouncementCard({ announcement, audienceLabel, onPress 
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: '#fff', borderRadius: 12, padding: 14, marginBottom: 10, borderLeftWidth: 4, borderLeftColor: '#4F46E5' },
+  card: { backgroundColor: '#fff', borderRadius: 12, padding: 14, marginBottom: 10, borderLeftWidth: 4, borderLeftColor: '#4D92CF' },
   cardHigh: { borderLeftColor: '#DC2626' },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
   title: { fontSize: 15, fontWeight: '700', color: '#1F2937', flex: 1, marginRight: 8 },
   time: { fontSize: 11, color: '#9CA3AF' },
   body: { fontSize: 13, color: '#4B5563', lineHeight: 18 },
-  readMore: { fontSize: 12, color: '#4F46E5', fontWeight: '700', marginTop: 6 },
+  readMore: { fontSize: 12, color: '#4D92CF', fontWeight: '700', marginTop: 6 },
   audience: { fontSize: 11, color: '#9CA3AF', marginTop: 6, fontWeight: '600' },
 });

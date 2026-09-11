@@ -101,6 +101,6 @@ const styles = StyleSheet.create({
   label: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 6 },
   input: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, fontSize: 14 },
   multiline: { minHeight: 70, textAlignVertical: 'top' },
-  saveBtn: { backgroundColor: '#4F46E5', borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 10, marginBottom: 40 },
+  saveBtn: { backgroundColor: '#4D92CF', borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 10, marginBottom: 40 },
   saveBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
 });

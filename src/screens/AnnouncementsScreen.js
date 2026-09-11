@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
   modalCard: { backgroundColor: '#fff', borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 20, maxHeight: '85%' },
   detailTitle: { fontSize: 18, fontWeight: '800', color: '#111827', marginBottom: 6 },
   detailMeta: { fontSize: 12, color: '#9CA3AF', marginBottom: 4 },
-  detailAudience: { fontSize: 12, color: '#4F46E5', fontWeight: '600', marginBottom: 14 },
+  detailAudience: { fontSize: 12, color: '#4D92CF', fontWeight: '600', marginBottom: 14 },
   detailBody: { fontSize: 14, color: '#374151', lineHeight: 21 },
   closeDetailBtn: { paddingVertical: 14, alignItems: 'center', borderTopWidth: 1, borderTopColor: '#E5E7EB', marginTop: 12 },
-  closeDetailText: { color: '#4F46E5', fontWeight: '700', fontSize: 15 },
+  closeDetailText: { color: '#4D92CF', fontWeight: '700', fontSize: 15 },
 });

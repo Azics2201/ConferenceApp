@@ -57,6 +57,6 @@ const styles = StyleSheet.create({
   subtitle: { fontSize: 14, color: '#374151', marginTop: 6 },
   subtitleSmall: { fontSize: 12, color: '#6B7280', marginTop: 2 },
   note: { fontSize: 12, color: '#6B7280', textAlign: 'center', lineHeight: 18, paddingHorizontal: 12 },
-  doneBtn: { backgroundColor: '#4F46E5', borderRadius: 12, paddingVertical: 14, paddingHorizontal: 40, marginTop: 24 },
+  doneBtn: { backgroundColor: '#4D92CF', borderRadius: 12, paddingVertical: 14, paddingHorizontal: 40, marginTop: 24 },
   doneBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
 });

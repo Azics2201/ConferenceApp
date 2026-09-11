@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20 },
   cancelBtn: { paddingVertical: 8, paddingHorizontal: 12 },
   cancelText: { color: '#6B7280', fontWeight: '600', fontSize: 14 },
-  confirmBtn: { backgroundColor: '#4F46E5', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 16, marginLeft: 8 },
+  confirmBtn: { backgroundColor: '#4D92CF', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 16, marginLeft: 8 },
   confirmBtnDestructive: { backgroundColor: '#DC2626' },
   confirmText: { color: '#fff', fontWeight: '700', fontSize: 14 },
 });

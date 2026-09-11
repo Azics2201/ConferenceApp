@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
   label: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 6, marginTop: 14 },
   input: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, fontSize: 14 },
   error: { color: '#DC2626', fontSize: 13, marginTop: 10 },
-  submitBtn: { backgroundColor: '#4F46E5', borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 24 },
+  submitBtn: { backgroundColor: '#4D92CF', borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginTop: 24 },
   submitText: { color: '#fff', fontWeight: '700', fontSize: 15 },
   registerLink: { alignItems: 'center', marginTop: 20 },
-  registerLinkText: { color: '#4F46E5', fontSize: 13, fontWeight: '600' },
+  registerLinkText: { color: '#4D92CF', fontSize: 13, fontWeight: '600' },
 });

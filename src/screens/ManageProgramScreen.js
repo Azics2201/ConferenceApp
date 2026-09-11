@@ -61,7 +61,7 @@ export default function ManageProgramScreen() {
               <Text style={styles.rowMeta}>{item.day} · {item.startTime}–{item.endTime} · {item.room}</Text>
             </View>
             <TouchableOpacity onPress={() => openEdit(item)} style={styles.iconBtn}>
-              <Ionicons name="create-outline" size={20} color="#4F46E5" />
+              <Ionicons name="create-outline" size={20} color="#4D92CF" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setDeleteTarget(item)} style={styles.iconBtn}>
               <Ionicons name="trash-outline" size={20} color="#DC2626" />
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F3F4F6' },
   restricted: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   restrictedText: { fontSize: 14, color: '#DC2626', textAlign: 'center' },
-  addBtn: { backgroundColor: '#4F46E5', borderRadius: 10, padding: 12, marginBottom: 14, alignItems: 'center' },
+  addBtn: { backgroundColor: '#4D92CF', borderRadius: 10, padding: 12, marginBottom: 14, alignItems: 'center' },
   addBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
   row: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 12, padding: 12, marginBottom: 8 },
   rowTitle: { fontSize: 14, fontWeight: '600', color: '#1F2937' },

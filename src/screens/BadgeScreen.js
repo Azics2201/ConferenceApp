@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
   name: { fontSize: 20, fontWeight: '800', color: '#111827' },
   meta: { fontSize: 13, color: '#6B7280', marginTop: 4 },
-  role: { fontSize: 12, color: '#4F46E5', fontWeight: '700', marginTop: 4 },
+  role: { fontSize: 12, color: '#4D92CF', fontWeight: '700', marginTop: 4 },
   sectionLabel: { fontSize: 14, fontWeight: '700', color: '#111827', marginBottom: 8 },
   sessionRow: { backgroundColor: '#F9FAFB', borderRadius: 10, padding: 12, marginBottom: 8, width: '100%' },
   sessionTitle: { fontSize: 14, fontWeight: '600', color: '#1F2937' },

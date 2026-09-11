@@ -32,7 +32,7 @@ export default function AdminHomeScreen({ navigation }) {
 
       {ITEMS.map((item) => (
         <TouchableOpacity key={item.key} style={styles.row} onPress={() => navigation.navigate(item.key)}>
-          <Ionicons name={item.icon} size={22} color="#4F46E5" />
+          <Ionicons name={item.icon} size={22} color="#4D92CF" />
           <View style={{ flex: 1, marginLeft: 12 }}>
             <Text style={styles.rowLabel}>{item.label}</Text>
             <Text style={styles.rowDesc}>{item.desc}</Text>

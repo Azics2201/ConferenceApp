@@ -22,7 +22,7 @@ export default function InfoScreen() {
         <Text style={[styles.body, { marginTop: 6 }]}>{venue.description}</Text>
         <Image source={{ uri: staticMapUrl }} style={styles.map} resizeMode="cover" />
         <TouchableOpacity style={styles.linkRow} onPress={openInMaps}>
-          <Ionicons name="navigate-outline" size={16} color="#4F46E5" />
+          <Ionicons name="navigate-outline" size={16} color="#4D92CF" />
           <Text style={styles.linkText}>Open in Maps</Text>
         </TouchableOpacity>
       </Section>
@@ -75,7 +75,7 @@ export default function InfoScreen() {
       <Section title="Materials & documents">
         {MATERIALS.map((m) => (
           <TouchableOpacity key={m.id} style={styles.materialRow} onPress={() => Linking.openURL(m.url)}>
-            <Ionicons name="document-text-outline" size={20} color="#4F46E5" />
+            <Ionicons name="document-text-outline" size={20} color="#4D92CF" />
             <Text style={styles.materialText}>{m.title}</Text>
           </TouchableOpacity>
         ))}
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   body: { fontSize: 13, color: '#374151', lineHeight: 19 },
   map: { width: '100%', height: 180, borderRadius: 12, marginTop: 10, marginBottom: 10, backgroundColor: '#E5E7EB' },
   linkRow: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start' },
-  linkText: { color: '#4F46E5', fontWeight: '600', fontSize: 13, marginLeft: 6 },
+  linkText: { color: '#4D92CF', fontWeight: '600', fontSize: 13, marginLeft: 6 },
   hotelRow: { marginBottom: 10 },
   hotelName: { fontSize: 14, fontWeight: '600', color: '#1F2937', marginBottom: 2 },
   bullet: { fontSize: 13, color: '#374151', lineHeight: 20 },

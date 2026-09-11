@@ -149,7 +149,7 @@ export default function ManageParticipantsScreen() {
                 </Text>
               </View>
               <TouchableOpacity onPress={() => openEdit(item)} style={styles.iconBtn}>
-                <Ionicons name="create-outline" size={20} color="#4F46E5" />
+                <Ionicons name="create-outline" size={20} color="#4D92CF" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setDeleteTarget(item)} style={styles.iconBtn}>
                 <Ionicons name="trash-outline" size={20} color="#DC2626" />
@@ -184,27 +184,27 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F3F4F6' },
   restricted: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   restrictedText: { fontSize: 14, color: '#DC2626', textAlign: 'center' },
-  addBtn: { backgroundColor: '#4F46E5', borderRadius: 10, padding: 12, marginBottom: 12, alignItems: 'center' },
+  addBtn: { backgroundColor: '#4D92CF', borderRadius: 10, padding: 12, marginBottom: 12, alignItems: 'center' },
   addBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
   search: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, backgroundColor: '#fff', marginBottom: 10 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 10 },
   chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: '#fff', marginRight: 8, marginBottom: 8, borderWidth: 1, borderColor: '#E5E7EB' },
-  chipActive: { backgroundColor: '#4F46E5', borderColor: '#4F46E5' },
+  chipActive: { backgroundColor: '#4D92CF', borderColor: '#4D92CF' },
   chipText: { fontSize: 12, color: '#374151' },
   chipTextActive: { color: '#fff', fontWeight: '600' },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
   summaryText: { fontSize: 12, color: '#6B7280' },
-  exportBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#4F46E5', borderRadius: 8, paddingVertical: 6, paddingHorizontal: 10 },
+  exportBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#4D92CF', borderRadius: 8, paddingVertical: 6, paddingHorizontal: 10 },
   exportBtnText: { color: '#fff', fontSize: 12, fontWeight: '700', marginLeft: 6 },
   exportMessage: { fontSize: 12, color: '#059669', marginBottom: 10 },
   emptyNote: { fontSize: 12, color: '#9CA3AF', marginTop: 10, lineHeight: 17 },
   row: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: '#fff', borderRadius: 12, padding: 12, marginBottom: 8 },
   nameRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' },
   rowName: { fontSize: 14, fontWeight: '700', color: '#1F2937' },
-  subAdminBadge: { backgroundColor: '#EEF2FF', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 8 },
-  subAdminBadgeText: { fontSize: 10, color: '#4338CA', fontWeight: '700' },
+  subAdminBadge: { backgroundColor: '#E4EFF8', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 8 },
+  subAdminBadgeText: { fontSize: 10, color: '#4F5D1B', fontWeight: '700' },
   rowMeta: { fontSize: 12, color: '#6B7280', marginTop: 2 },
   rowDate: { fontSize: 11, color: '#9CA3AF', marginTop: 2 },
-  sessionsLabel: { fontSize: 11, color: '#4F46E5', marginTop: 4, lineHeight: 15 },
+  sessionsLabel: { fontSize: 11, color: '#4D92CF', marginTop: 4, lineHeight: 15 },
   iconBtn: { padding: 6, marginLeft: 4 },
 });

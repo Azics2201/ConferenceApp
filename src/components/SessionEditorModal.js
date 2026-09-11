@@ -97,5 +97,5 @@ const styles = StyleSheet.create({
   multiline: { height: 70, textAlignVertical: 'top' },
   actions: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20, paddingBottom: 10 },
   cancel: { color: '#6B7280', fontWeight: '600', marginRight: 20 },
-  save: { color: '#4F46E5', fontWeight: '700' },
+  save: { color: '#4D92CF', fontWeight: '700' },
 });

@@ -114,7 +114,7 @@ function MainTabs() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ color, size }) => <Ionicons name={ICONS[route.name]} color={color} size={size} />,
-        tabBarActiveTintColor: '#4F46E5',
+        tabBarActiveTintColor: '#4D92CF',
         tabBarInactiveTintColor: '#9CA3AF',
       })}
     >
