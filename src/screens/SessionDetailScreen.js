@@ -1,0 +1,63 @@
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useApp } from '../context/AppContext';
+
+export default function SessionDetailScreen({ route }) {
+  const { sessionId } = route.params;
+  const { sessions, speakers, favorites, toggleFavorite, currentUser } = useApp();
+  const session = sessions.find((s) => s.id === sessionId);
+
+  if (!session) {
+    return (
+      <View style={styles.center}>
+        <Text>This session is no longer available.</Text>
+      </View>
+    );
+  }
+
+  const isFavorite = favorites.includes(sessionId);
+  const isSignedUp = !!currentUser && (currentUser.sessionIds || []).includes(sessionId);
+  const sessionSpeakers = session.speakerIds.map((id) => speakers.find((s) => s.id === id)).filter(Boolean);
+
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>{session.title}</Text>
+        <TouchableOpacity onPress={() => toggleFavorite(sessionId)}>
+          <Ionicons name={isFavorite ? 'star' : 'star-outline'} size={26} color={isFavorite ? '#E8A93A' : '#9AA0A6'} />
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.meta}>{session.day} · {session.startTime}–{session.endTime}</Text>
+      <Text style={styles.meta}>{session.room} · {session.track}</Text>
+      {isSignedUp && <Text style={styles.signedUp}>You're signed up for this session.</Text>}
+      {session.updatedAt && <Text style={styles.updated}>This session's details were recently updated.</Text>}
+
+      <Text style={styles.sectionLabel}>About this session</Text>
+      <Text style={styles.description}>{session.description}</Text>
+
+      <Text style={styles.sectionLabel}>Speakers</Text>
+      {sessionSpeakers.map((sp) => (
+        <View key={sp.id} style={styles.speakerRow}>
+          <Text style={styles.speakerName}>{sp.name}</Text>
+          <Text style={styles.speakerTitle}>{sp.title}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  title: { fontSize: 20, fontWeight: '800', color: '#111827', flex: 1, marginRight: 12 },
+  meta: { fontSize: 13, color: '#6B7280', marginTop: 4 },
+  signedUp: { fontSize: 12, color: '#065F46', fontWeight: '700', marginTop: 8 },
+  updated: { fontSize: 12, color: '#92400E', backgroundColor: '#FEF3C7', padding: 8, borderRadius: 8, marginTop: 10 },
+  sectionLabel: { fontSize: 14, fontWeight: '700', color: '#111827', marginTop: 20, marginBottom: 6 },
+  description: { fontSize: 14, color: '#374151', lineHeight: 20 },
+  speakerRow: { marginBottom: 10 },
+  speakerName: { fontSize: 14, fontWeight: '600', color: '#1F2937' },
+  speakerTitle: { fontSize: 12, color: '#6B7280' },
+});
