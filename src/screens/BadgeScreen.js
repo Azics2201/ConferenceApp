@@ -4,12 +4,12 @@ import { useApp } from '../context/AppContext';
 import QRCodeBadge from '../components/QRCodeBadge';
 
 export default function BadgeScreen() {
-  const { currentUser, sessions } = useApp();
+  const { currentUser, sessions, t } = useApp();
 
   if (!currentUser) {
     return (
       <View style={styles.center}>
-        <Text>No participant account is logged in.</Text>
+        <Text>{t('badge.noAccount')}</Text>
       </View>
     );
   }
@@ -20,7 +20,7 @@ export default function BadgeScreen() {
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 20, alignItems: 'center' }}>
       <Text style={styles.name}>{currentUser.firstName} {currentUser.lastName}</Text>
       <Text style={styles.meta}>{currentUser.organization}{currentUser.organization ? ' · ' : ''}{currentUser.jobTitle}</Text>
-      <Text style={styles.role}>{currentUser.role}</Text>
+      <Text style={styles.role}>{t(`roles.${currentUser.role}`)}</Text>
 
       <View style={{ marginVertical: 20 }}>
         <QRCodeBadge registration={currentUser} />
@@ -28,7 +28,7 @@ export default function BadgeScreen() {
 
       {mySessions.length > 0 && (
         <View style={{ width: '100%' }}>
-          <Text style={styles.sectionLabel}>Your selected sessions</Text>
+          <Text style={styles.sectionLabel}>{t('badge.yourSessions')}</Text>
           {mySessions.map((s) => (
             <View key={s.id} style={styles.sessionRow}>
               <Text style={styles.sessionTitle}>{s.title}</Text>

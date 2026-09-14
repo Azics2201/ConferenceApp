@@ -6,7 +6,7 @@ import SessionEditorModal from '../components/SessionEditorModal';
 import ConfirmModal from '../components/ConfirmModal';
 
 export default function ManageProgramScreen() {
-  const { hasAdminAccess, sessions, speakers, addSession, updateSession, deleteSession } = useApp();
+  const { hasAdminAccess, sessions, speakers, addSession, updateSession, deleteSession, t } = useApp();
   const [editorVisible, setEditorVisible] = useState(false);
   const [editingSession, setEditingSession] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -38,7 +38,7 @@ export default function ManageProgramScreen() {
   if (!hasAdminAccess) {
     return (
       <View style={styles.restricted}>
-        <Text style={styles.restrictedText}>Administrator access required.</Text>
+        <Text style={styles.restrictedText}>{t('manageProgram.restricted')}</Text>
       </View>
     );
   }
@@ -51,7 +51,7 @@ export default function ManageProgramScreen() {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
           <TouchableOpacity style={styles.addBtn} onPress={openAdd}>
-            <Text style={styles.addBtnText}>+ Add session</Text>
+            <Text style={styles.addBtnText}>{t('manageProgram.addSession')}</Text>
           </TouchableOpacity>
         }
         renderItem={({ item }) => (
@@ -80,9 +80,9 @@ export default function ManageProgramScreen() {
 
       <ConfirmModal
         visible={!!deleteTarget}
-        title="Delete session"
-        body={deleteTarget ? `Remove "${deleteTarget.title}"?` : ''}
-        confirmLabel="Delete"
+        title={t('manageProgram.deleteTitle')}
+        body={deleteTarget ? t('manageProgram.deleteBody', { title: deleteTarget.title }) : ''}
+        confirmLabel={t('manageProgram.deleteLabel')}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={confirmDelete}
       />

@@ -3,18 +3,18 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, ScrollView }
 import { useApp } from '../context/AppContext';
 import AnnouncementCard, { timeAgo } from '../components/AnnouncementCard';
 
-function describeAudience(audience, sessions) {
-  if (!audience || audience.type === 'all') return 'All participants';
-  if (audience.type === 'role') return `${audience.role} only`;
+function describeAudience(audience, sessions, t) {
+  if (!audience || audience.type === 'all') return t('announcements.allParticipants');
+  if (audience.type === 'role') return t('announcements.roleOnly', { role: t(`roles.${audience.role}`) });
   if (audience.type === 'session') {
     const s = sessions.find((x) => x.id === audience.sessionId);
-    return s ? `Attendees of "${s.title}"` : 'Attendees of a specific session';
+    return s ? t('announcements.attendeesOf', { title: s.title }) : t('announcements.attendeesOfSpecificSession');
   }
-  return 'All participants';
+  return t('announcements.allParticipants');
 }
 
 export default function AnnouncementsScreen() {
-  const { announcements, sessions } = useApp();
+  const { announcements, sessions, t } = useApp();
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
   return (
@@ -26,7 +26,7 @@ export default function AnnouncementsScreen() {
         renderItem={({ item }) => (
           <AnnouncementCard
             announcement={item}
-            audienceLabel={describeAudience(item.audience, sessions)}
+            audienceLabel={describeAudience(item.audience, sessions, t)}
             onPress={() => setSelectedAnnouncement(item)}
           />
         )}
@@ -39,14 +39,14 @@ export default function AnnouncementsScreen() {
               <ScrollView>
                 <Text style={styles.detailTitle}>{selectedAnnouncement.title}</Text>
                 <Text style={styles.detailMeta}>
-                  {timeAgo(selectedAnnouncement.timestamp)} · {new Date(selectedAnnouncement.timestamp).toLocaleString()}
+                  {timeAgo(selectedAnnouncement.timestamp, t)} · {new Date(selectedAnnouncement.timestamp).toLocaleString()}
                 </Text>
-                <Text style={styles.detailAudience}>To: {describeAudience(selectedAnnouncement.audience, sessions)}</Text>
+                <Text style={styles.detailAudience}>{t('announcements.to', { audience: describeAudience(selectedAnnouncement.audience, sessions, t) })}</Text>
                 <Text style={styles.detailBody}>{selectedAnnouncement.body}</Text>
               </ScrollView>
             )}
             <TouchableOpacity style={styles.closeDetailBtn} onPress={() => setSelectedAnnouncement(null)}>
-              <Text style={styles.closeDetailText}>Close</Text>
+              <Text style={styles.closeDetailText}>{t('common.close')}</Text>
             </TouchableOpacity>
           </View>
         </View>

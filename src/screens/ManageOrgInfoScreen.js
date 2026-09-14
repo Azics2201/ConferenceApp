@@ -18,7 +18,7 @@ function textToAccommodation(text) {
 }
 
 export default function ManageOrgInfoScreen() {
-  const { hasAdminAccess, orgInfo, updateOrgInfo } = useApp();
+  const { hasAdminAccess, orgInfo, updateOrgInfo, t } = useApp();
 
   const [venueName, setVenueName] = useState(orgInfo.venue.name);
   const [venueAddress, setVenueAddress] = useState(orgInfo.venue.address);
@@ -46,40 +46,40 @@ export default function ManageOrgInfoScreen() {
       instructions: instructionsText.split('\n').map((l) => l.trim()).filter(Boolean),
       additionalInfo,
     });
-    Alert.alert('Saved', 'Organizational info updated. Participants will see the changes on the Info tab.');
+    Alert.alert(t('manageOrgInfo.savedTitle'), t('manageOrgInfo.savedBody'));
   };
 
   if (!hasAdminAccess) {
     return (
       <View style={styles.restricted}>
-        <Text style={styles.restrictedText}>Administrator access required.</Text>
+        <Text style={styles.restrictedText}>{t('manageOrgInfo.restricted')}</Text>
       </View>
     );
   }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
-      <Field label="Venue name" value={venueName} onChangeText={setVenueName} />
-      <Field label="Venue address" value={venueAddress} onChangeText={setVenueAddress} />
-      <Field label="Venue description" value={venueDescription} onChangeText={setVenueDescription} multiline />
-      <Field label="Directions" value={directions} onChangeText={setDirections} multiline />
-      <Field label="Parking" value={parking} onChangeText={setParking} multiline />
-      <Field label="Public transportation" value={transportation} onChangeText={setTransportation} multiline />
+      <Field label={t('manageOrgInfo.venueName')} value={venueName} onChangeText={setVenueName} />
+      <Field label={t('manageOrgInfo.venueAddress')} value={venueAddress} onChangeText={setVenueAddress} />
+      <Field label={t('manageOrgInfo.venueDescription')} value={venueDescription} onChangeText={setVenueDescription} multiline />
+      <Field label={t('manageOrgInfo.directions')} value={directions} onChangeText={setDirections} multiline />
+      <Field label={t('manageOrgInfo.parking')} value={parking} onChangeText={setParking} multiline />
+      <Field label={t('manageOrgInfo.transportation')} value={transportation} onChangeText={setTransportation} multiline />
       <Field
-        label={'Accommodation (one per line: "Hotel name — description")'}
+        label={t('manageOrgInfo.accommodation')}
         value={accommodationText}
         onChangeText={setAccommodationText}
         multiline
       />
-      <Field label="Organizer contact name" value={contactName} onChangeText={setContactName} />
-      <Field label="Organizer contact email" value={contactEmail} onChangeText={setContactEmail} autoCapitalize="none" />
-      <Field label="Organizer contact phone" value={contactPhone} onChangeText={setContactPhone} />
-      <Field label="Catering" value={catering} onChangeText={setCatering} multiline />
-      <Field label="Important instructions (one per line)" value={instructionsText} onChangeText={setInstructionsText} multiline />
-      <Field label="Additional information" value={additionalInfo} onChangeText={setAdditionalInfo} multiline />
+      <Field label={t('manageOrgInfo.contactName')} value={contactName} onChangeText={setContactName} />
+      <Field label={t('manageOrgInfo.contactEmail')} value={contactEmail} onChangeText={setContactEmail} autoCapitalize="none" />
+      <Field label={t('manageOrgInfo.contactPhone')} value={contactPhone} onChangeText={setContactPhone} />
+      <Field label={t('manageOrgInfo.catering')} value={catering} onChangeText={setCatering} multiline />
+      <Field label={t('manageOrgInfo.instructions')} value={instructionsText} onChangeText={setInstructionsText} multiline />
+      <Field label={t('manageOrgInfo.additionalInfo')} value={additionalInfo} onChangeText={setAdditionalInfo} multiline />
 
       <TouchableOpacity style={styles.saveBtn} onPress={onSave}>
-        <Text style={styles.saveBtnText}>Save changes</Text>
+        <Text style={styles.saveBtnText}>{t('manageOrgInfo.save')}</Text>
       </TouchableOpacity>
     </ScrollView>
   );

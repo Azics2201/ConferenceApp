@@ -5,13 +5,13 @@ import { useApp } from '../context/AppContext';
 
 export default function SessionDetailScreen({ route }) {
   const { sessionId } = route.params;
-  const { sessions, speakers, favorites, toggleFavorite, currentUser } = useApp();
+  const { sessions, speakers, favorites, toggleFavorite, currentUser, t } = useApp();
   const session = sessions.find((s) => s.id === sessionId);
 
   if (!session) {
     return (
       <View style={styles.center}>
-        <Text>This session is no longer available.</Text>
+        <Text>{t('sessionDetail.notFound')}</Text>
       </View>
     );
   }
@@ -30,13 +30,13 @@ export default function SessionDetailScreen({ route }) {
       </View>
       <Text style={styles.meta}>{session.day} · {session.startTime}–{session.endTime}</Text>
       <Text style={styles.meta}>{session.room} · {session.track}</Text>
-      {isSignedUp && <Text style={styles.signedUp}>You're signed up for this session.</Text>}
-      {session.updatedAt && <Text style={styles.updated}>This session's details were recently updated.</Text>}
+      {isSignedUp && <Text style={styles.signedUp}>{t('sessionDetail.signedUp')}</Text>}
+      {session.updatedAt && <Text style={styles.updated}>{t('sessionDetail.updated')}</Text>}
 
-      <Text style={styles.sectionLabel}>About this session</Text>
+      <Text style={styles.sectionLabel}>{t('sessionDetail.about')}</Text>
       <Text style={styles.description}>{session.description}</Text>
 
-      <Text style={styles.sectionLabel}>Speakers</Text>
+      <Text style={styles.sectionLabel}>{t('sessionDetail.speakers')}</Text>
       {sessionSpeakers.map((sp) => (
         <View key={sp.id} style={styles.speakerRow}>
           <Text style={styles.speakerName}>{sp.name}</Text>

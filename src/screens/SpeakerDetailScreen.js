@@ -4,13 +4,13 @@ import { useApp } from '../context/AppContext';
 
 export default function SpeakerDetailScreen({ route }) {
   const { speakerId } = route.params;
-  const { speakers, sessions } = useApp();
+  const { speakers, sessions, t } = useApp();
   const speaker = speakers.find((s) => s.id === speakerId);
 
   if (!speaker) {
     return (
       <View style={styles.center}>
-        <Text>This speaker is no longer listed.</Text>
+        <Text>{t('speakerDetail.notFound')}</Text>
       </View>
     );
   }
@@ -26,7 +26,7 @@ export default function SpeakerDetailScreen({ route }) {
       </View>
       <Text style={styles.bio}>{speaker.bio}</Text>
 
-      <Text style={styles.sectionLabel}>Sessions</Text>
+      <Text style={styles.sectionLabel}>{t('speakerDetail.sessions')}</Text>
       {speakerSessions.map((s) => (
         <View key={s.id} style={styles.sessionRow}>
           <Text style={styles.sessionTitle}>{s.title}</Text>

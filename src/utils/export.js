@@ -51,7 +51,7 @@ export function buildParticipantsCSV(accounts, sessions) {
 // Fully local — works with no network and no backend. On web this triggers a
 // browser download; on a native device it writes a temp file and opens the
 // share sheet so the organizer can save or send it (e.g. via email/AirDrop).
-export async function exportParticipantsLocally(accounts, sessions, filename = 'participants.csv') {
+export async function exportParticipantsLocally(accounts, sessions, filename = 'participants.csv', dialogTitle = 'Export participants') {
   const csv = buildParticipantsCSV(accounts, sessions);
 
   if (Platform.OS === 'web') {
@@ -72,7 +72,7 @@ export async function exportParticipantsLocally(accounts, sessions, filename = '
     await FileSystem.writeAsStringAsync(path, csv, { encoding: FileSystem.EncodingType.UTF8 });
     const canShare = await Sharing.isAvailableAsync();
     if (canShare) {
-      await Sharing.shareAsync(path, { mimeType: 'text/csv', dialogTitle: 'Export participants' });
+      await Sharing.shareAsync(path, { mimeType: 'text/csv', dialogTitle });
     }
     return { success: true, path };
   } catch (e) {

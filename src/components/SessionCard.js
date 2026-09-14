@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
 
 export default function SessionCard({ session, onPress, isFavorite, onToggleFavorite }) {
-  const { speakers, currentUser } = useApp();
+  const { speakers, currentUser, t } = useApp();
   const speakerNames = session.speakerIds
     .map((id) => speakers.find((s) => s.id === id)?.name)
     .filter(Boolean)
@@ -36,12 +36,12 @@ export default function SessionCard({ session, onPress, isFavorite, onToggleFavo
           {isSignedUp && (
             <View style={styles.signedUpBadge}>
               <Ionicons name="checkmark-circle" size={12} color="#065F46" />
-              <Text style={styles.signedUpText}>You're signed up</Text>
+              <Text style={styles.signedUpText}>{t('sessionCard.signedUp')}</Text>
             </View>
           )}
           {session.updatedAt && (
             <View style={styles.changedBadge}>
-              <Text style={styles.changedText}>Updated</Text>
+              <Text style={styles.changedText}>{t('sessionCard.updated')}</Text>
             </View>
           )}
         </View>

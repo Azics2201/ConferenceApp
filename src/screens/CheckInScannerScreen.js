@@ -4,7 +4,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useApp } from '../context/AppContext';
 
 export default function CheckInScannerScreen() {
-  const { hasAdminAccess, checkIns, recordCheckIn } = useApp();
+  const { hasAdminAccess, checkIns, recordCheckIn, t } = useApp();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(null);
   const [scanError, setScanError] = useState(null);
@@ -20,7 +20,7 @@ export default function CheckInScannerScreen() {
       setScanError(null);
     } catch (e) {
       setScanned(null);
-      setScanError('This QR code is not a recognized conference badge.');
+      setScanError(t('checkInScanner.invalidBadge'));
     }
   };
 
@@ -40,7 +40,7 @@ export default function CheckInScannerScreen() {
   if (!hasAdminAccess) {
     return (
       <View style={styles.center}>
-        <Text style={styles.restrictedText}>Administrator access required.</Text>
+        <Text style={styles.restrictedText}>{t('checkInScanner.restricted')}</Text>
       </View>
     );
   }
@@ -52,9 +52,9 @@ export default function CheckInScannerScreen() {
   if (!permission.granted) {
     return (
       <View style={styles.center}>
-        <Text style={styles.permissionText}>Camera access is needed to scan attendee badges.</Text>
+        <Text style={styles.permissionText}>{t('checkInScanner.permissionText')}</Text>
         <TouchableOpacity style={styles.permissionBtn} onPress={requestPermission}>
-          <Text style={styles.permissionBtnText}>Grant camera access</Text>
+          <Text style={styles.permissionBtnText}>{t('checkInScanner.grantAccess')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -75,13 +75,13 @@ export default function CheckInScannerScreen() {
         {scanned && (
           <>
             <Text style={styles.resultName}>{scanned.name}</Text>
-            <Text style={styles.resultMeta}>{scanned.org}{scanned.org ? ' · ' : ''}{scanned.role}</Text>
+            <Text style={styles.resultMeta}>{scanned.org}{scanned.org ? ' · ' : ''}{scanned.role ? t(`roles.${scanned.role}`) : ''}</Text>
             <Text style={styles.resultId}>{scanned.id}</Text>
             <TouchableOpacity style={styles.confirmBtn} onPress={confirmCheckIn}>
-              <Text style={styles.confirmBtnText}>Record check-in</Text>
+              <Text style={styles.confirmBtnText}>{t('checkInScanner.recordCheckIn')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={scanAgain}>
-              <Text style={styles.scanAgain}>Scan a different badge</Text>
+              <Text style={styles.scanAgain}>{t('checkInScanner.scanDifferent')}</Text>
             </TouchableOpacity>
           </>
         )}
@@ -89,18 +89,18 @@ export default function CheckInScannerScreen() {
           <>
             <Text style={styles.errorText}>{scanError}</Text>
             <TouchableOpacity onPress={scanAgain}>
-              <Text style={styles.scanAgain}>Try again</Text>
+              <Text style={styles.scanAgain}>{t('checkInScanner.tryAgain')}</Text>
             </TouchableOpacity>
           </>
         )}
-        {!scanned && !scanError && <Text style={styles.hint}>Point the camera at a participant's badge QR code.</Text>}
+        {!scanned && !scanError && <Text style={styles.hint}>{t('checkInScanner.hint')}</Text>}
       </View>
 
       <FlatList
         style={styles.list}
         data={checkIns}
         keyExtractor={(item) => item.participantId}
-        ListHeaderComponent={<Text style={styles.listHeader}>Recently checked in</Text>}
+        ListHeaderComponent={<Text style={styles.listHeader}>{t('checkInScanner.recentlyCheckedIn')}</Text>}
         renderItem={({ item }) => (
           <View style={styles.checkInRow}>
             <Text style={styles.checkInName}>{item.name}</Text>

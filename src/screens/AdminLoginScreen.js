@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { useApp } from '../context/AppContext';
 
 export default function AdminLoginScreen() {
-  const { loginAdmin } = useApp();
+  const { loginAdmin, t } = useApp();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,7 +12,7 @@ export default function AdminLoginScreen() {
   const onSubmit = async () => {
     setError('');
     if (!username.trim() || !password) {
-      setError('Please enter a username and password.');
+      setError(t('adminLogin.missingFields'));
       return;
     }
     setSubmitting(true);
@@ -26,31 +26,31 @@ export default function AdminLoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Username</Text>
+      <Text style={styles.label}>{t('adminLogin.username')}</Text>
       <TextInput
         style={styles.input}
         value={username}
         onChangeText={setUsername}
-        placeholder="Username"
+        placeholder={t('adminLogin.usernamePlaceholder')}
         autoCapitalize="none"
       />
 
-      <Text style={styles.label}>Password</Text>
+      <Text style={styles.label}>{t('adminLogin.password')}</Text>
       <TextInput
         style={styles.input}
         value={password}
         onChangeText={setPassword}
-        placeholder="Password"
+        placeholder={t('adminLogin.passwordPlaceholder')}
         secureTextEntry
       />
 
       {!!error && <Text style={styles.error}>{error}</Text>}
 
       <TouchableOpacity style={styles.submitBtn} onPress={onSubmit} disabled={submitting}>
-        <Text style={styles.submitText}>Log in as administrator</Text>
+        <Text style={styles.submitText}>{t('adminLogin.submit')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.hint}>For testing: username "admin", password "admin".</Text>
+      <Text style={styles.hint}>{t('adminLogin.hint')}</Text>
     </View>
   );
 }

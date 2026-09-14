@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext';
 import { MATERIALS } from '../data/materials';
 
 export default function InfoScreen() {
-  const { orgInfo } = useApp();
+  const { orgInfo, t } = useApp();
   const { venue, directions, parking, transportation, accommodation, organizerContact, catering, instructions, additionalInfo } = orgInfo;
 
   const staticMapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${venue.latitude},${venue.longitude}&zoom=15&size=600x300&markers=${venue.latitude},${venue.longitude},red-pushpin`;
@@ -16,30 +16,30 @@ export default function InfoScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
-      <Section title="Venue">
+      <Section title={t('info.venue')}>
         <Text style={styles.venueName}>{venue.name}</Text>
         <Text style={styles.body}>{venue.address}</Text>
         <Text style={[styles.body, { marginTop: 6 }]}>{venue.description}</Text>
         <Image source={{ uri: staticMapUrl }} style={styles.map} resizeMode="cover" />
         <TouchableOpacity style={styles.linkRow} onPress={openInMaps}>
           <Ionicons name="navigate-outline" size={16} color="#4D92CF" />
-          <Text style={styles.linkText}>Open in Maps</Text>
+          <Text style={styles.linkText}>{t('info.openInMaps')}</Text>
         </TouchableOpacity>
       </Section>
 
-      <Section title="Directions">
+      <Section title={t('info.directions')}>
         <Text style={styles.body}>{directions}</Text>
       </Section>
 
-      <Section title="Parking">
+      <Section title={t('info.parking')}>
         <Text style={styles.body}>{parking}</Text>
       </Section>
 
-      <Section title="Public transportation">
+      <Section title={t('info.transportation')}>
         <Text style={styles.body}>{transportation}</Text>
       </Section>
 
-      <Section title="Accommodation">
+      <Section title={t('info.accommodation')}>
         {accommodation.map((hotel, i) => (
           <View key={i} style={styles.hotelRow}>
             <Text style={styles.hotelName}>{hotel.name}</Text>
@@ -48,7 +48,7 @@ export default function InfoScreen() {
         ))}
       </Section>
 
-      <Section title="Organizer contact">
+      <Section title={t('info.organizerContact')}>
         <Text style={styles.body}>{organizerContact.name}</Text>
         <TouchableOpacity onPress={() => Linking.openURL(`mailto:${organizerContact.email}`)}>
           <Text style={styles.linkText}>{organizerContact.email}</Text>
@@ -58,21 +58,21 @@ export default function InfoScreen() {
         </TouchableOpacity>
       </Section>
 
-      <Section title="Catering">
+      <Section title={t('info.catering')}>
         <Text style={styles.body}>{catering}</Text>
       </Section>
 
-      <Section title="Important instructions">
+      <Section title={t('info.instructions')}>
         {instructions.map((line, i) => (
           <Text key={i} style={styles.bullet}>• {line}</Text>
         ))}
       </Section>
 
-      <Section title="Additional information">
+      <Section title={t('info.additionalInfo')}>
         <Text style={styles.body}>{additionalInfo}</Text>
       </Section>
 
-      <Section title="Materials & documents">
+      <Section title={t('info.materials')}>
         {MATERIALS.map((m) => (
           <TouchableOpacity key={m.id} style={styles.materialRow} onPress={() => Linking.openURL(m.url)}>
             <Ionicons name="document-text-outline" size={20} color="#4D92CF" />

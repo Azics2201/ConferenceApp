@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import CheckboxRow from './CheckboxRow';
+import { useApp } from '../context/AppContext';
 
 const ROLES = ['Attendee', 'Speaker', 'Press', 'Organizer'];
 
@@ -20,6 +21,7 @@ const emptyForm = {
 };
 
 export default function ParticipantEditorModal({ visible, initialAccount, sessions, error, onCancel, onSave }) {
+  const { t } = useApp();
   const [form, setForm] = useState(emptyForm);
   const isEditing = !!initialAccount;
 
@@ -64,15 +66,15 @@ export default function ParticipantEditorModal({ visible, initialAccount, sessio
       <View style={styles.overlay}>
         <View style={styles.card}>
           <ScrollView>
-            <Text style={styles.title}>{isEditing ? 'Edit participant' : 'Add person'}</Text>
+            <Text style={styles.title}>{isEditing ? t('participantEditor.editTitle') : t('participantEditor.addTitle')}</Text>
 
-            <Text style={styles.label}>First name *</Text>
+            <Text style={styles.label}>{t('participantEditor.firstName')}</Text>
             <TextInput style={styles.input} value={form.firstName} onChangeText={setField('firstName')} />
 
-            <Text style={styles.label}>Last name *</Text>
+            <Text style={styles.label}>{t('participantEditor.lastName')}</Text>
             <TextInput style={styles.input} value={form.lastName} onChangeText={setField('lastName')} />
 
-            <Text style={styles.label}>Email *</Text>
+            <Text style={styles.label}>{t('participantEditor.email')}</Text>
             <TextInput
               style={styles.input}
               value={form.email}
@@ -81,25 +83,25 @@ export default function ParticipantEditorModal({ visible, initialAccount, sessio
               keyboardType="email-address"
             />
 
-            <Text style={styles.label}>Organization</Text>
+            <Text style={styles.label}>{t('participantEditor.organization')}</Text>
             <TextInput style={styles.input} value={form.organization} onChangeText={setField('organization')} />
 
-            <Text style={styles.label}>Job title / position</Text>
+            <Text style={styles.label}>{t('participantEditor.jobTitle')}</Text>
             <TextInput style={styles.input} value={form.jobTitle} onChangeText={setField('jobTitle')} />
 
-            <Text style={styles.label}>Phone</Text>
+            <Text style={styles.label}>{t('participantEditor.phone')}</Text>
             <TextInput style={styles.input} value={form.phone} onChangeText={setField('phone')} keyboardType="phone-pad" />
 
-            <Text style={styles.label}>{isEditing ? 'New password (leave blank to keep current)' : 'Password *'}</Text>
+            <Text style={styles.label}>{isEditing ? t('participantEditor.newPassword') : t('participantEditor.password')}</Text>
             <TextInput
               style={styles.input}
               value={form.password}
               onChangeText={setField('password')}
               secureTextEntry
-              placeholder={isEditing ? 'Leave blank to keep current password' : 'At least 4 characters'}
+              placeholder={isEditing ? t('participantEditor.newPasswordPlaceholder') : t('participantEditor.passwordPlaceholder')}
             />
 
-            <Text style={styles.label}>Role</Text>
+            <Text style={styles.label}>{t('participantEditor.role')}</Text>
             <View style={styles.chipRow}>
               {ROLES.map((r) => (
                 <TouchableOpacity
@@ -107,23 +109,20 @@ export default function ParticipantEditorModal({ visible, initialAccount, sessio
                   style={[styles.chip, form.role === r && styles.chipActive]}
                   onPress={() => setField('role')(r)}
                 >
-                  <Text style={[styles.chipText, form.role === r && styles.chipTextActive]}>{r}</Text>
+                  <Text style={[styles.chipText, form.role === r && styles.chipTextActive]}>{t(`roles.${r}`)}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             <CheckboxRow
-              label="Grant administrator access (sub-admin)"
+              label={t('participantEditor.grantAdmin')}
               checked={form.isSubAdmin}
               onPress={() => setField('isSubAdmin')(!form.isSubAdmin)}
               style={{ marginTop: 6, marginBottom: 6 }}
             />
-            <Text style={styles.hint}>
-              Sub-admins get the same Admin tab access as the main administrator login (web only), using their own
-              email and password instead of the shared admin/admin login.
-            </Text>
+            <Text style={styles.hint}>{t('participantEditor.subAdminHint')}</Text>
 
-            <Text style={styles.sectionLabel}>Sessions</Text>
+            <Text style={styles.sectionLabel}>{t('participantEditor.sessions')}</Text>
             {sessionsByDay.map((group) => (
               <View key={group.day} style={{ marginBottom: 8 }}>
                 <Text style={styles.dayLabel}>{group.day}</Text>
@@ -142,10 +141,10 @@ export default function ParticipantEditorModal({ visible, initialAccount, sessio
 
             <View style={styles.actions}>
               <TouchableOpacity onPress={onCancel}>
-                <Text style={styles.cancel}>Cancel</Text>
+                <Text style={styles.cancel}>{t('participantEditor.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleSave}>
-                <Text style={styles.save}>Save</Text>
+                <Text style={styles.save}>{t('participantEditor.save')}</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

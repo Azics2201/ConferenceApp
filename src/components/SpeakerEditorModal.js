@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
+import { useApp } from '../context/AppContext';
 
 const emptyForm = { name: '', title: '', bio: '', photo: '' };
 
 export default function SpeakerEditorModal({ visible, initialSpeaker, onCancel, onSave }) {
+  const { t } = useApp();
   const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
@@ -23,26 +25,26 @@ export default function SpeakerEditorModal({ visible, initialSpeaker, onCancel, 
       <View style={styles.overlay}>
         <View style={styles.card}>
           <ScrollView>
-            <Text style={styles.title}>{initialSpeaker ? 'Edit speaker' : 'Add speaker'}</Text>
+            <Text style={styles.title}>{initialSpeaker ? t('speakerEditor.editTitle') : t('speakerEditor.addTitle')}</Text>
 
-            <Text style={styles.label}>Name</Text>
-            <TextInput style={styles.input} value={form.name} onChangeText={setField('name')} placeholder="Full name" />
+            <Text style={styles.label}>{t('speakerEditor.name')}</Text>
+            <TextInput style={styles.input} value={form.name} onChangeText={setField('name')} placeholder={t('speakerEditor.namePlaceholder')} />
 
-            <Text style={styles.label}>Title / role</Text>
-            <TextInput style={styles.input} value={form.title} onChangeText={setField('title')} placeholder="e.g. VP Engineering, Acme" />
+            <Text style={styles.label}>{t('speakerEditor.titleLabel')}</Text>
+            <TextInput style={styles.input} value={form.title} onChangeText={setField('title')} placeholder={t('speakerEditor.titlePlaceholder')} />
 
-            <Text style={styles.label}>Bio</Text>
+            <Text style={styles.label}>{t('speakerEditor.bio')}</Text>
             <TextInput style={[styles.input, styles.multiline]} value={form.bio} onChangeText={setField('bio')} multiline />
 
-            <Text style={styles.label}>Photo URL (optional)</Text>
+            <Text style={styles.label}>{t('speakerEditor.photo')}</Text>
             <TextInput style={styles.input} value={form.photo} onChangeText={setField('photo')} placeholder="https://..." autoCapitalize="none" />
 
             <View style={styles.actions}>
               <TouchableOpacity onPress={onCancel}>
-                <Text style={styles.cancel}>Cancel</Text>
+                <Text style={styles.cancel}>{t('speakerEditor.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleSave}>
-                <Text style={styles.save}>Save</Text>
+                <Text style={styles.save}>{t('speakerEditor.save')}</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

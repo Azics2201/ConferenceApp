@@ -5,13 +5,13 @@ import { useApp } from '../context/AppContext';
 import QRCodeBadge from '../components/QRCodeBadge';
 
 export default function RegistrationConfirmationScreen({ route }) {
-  const { login } = useApp();
+  const { login, t } = useApp();
   const account = route.params?.account;
 
   if (!account) {
     return (
       <View style={styles.center}>
-        <Text>No registration found.</Text>
+        <Text>{t('registrationConfirmation.noRegistration')}</Text>
       </View>
     );
   }
@@ -27,9 +27,9 @@ export default function RegistrationConfirmationScreen({ route }) {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 24, alignItems: 'center' }}>
       <Ionicons name="checkmark-circle" size={56} color="#059669" />
-      <Text style={styles.title}>You're registered!</Text>
+      <Text style={styles.title}>{t('registrationConfirmation.title')}</Text>
       <Text style={styles.subtitle}>
-        {account.firstName} {account.lastName} · {account.role}
+        {account.firstName} {account.lastName} · {t(`roles.${account.role}`)}
       </Text>
       <Text style={styles.subtitleSmall}>{account.email}</Text>
 
@@ -37,14 +37,10 @@ export default function RegistrationConfirmationScreen({ route }) {
         <QRCodeBadge registration={account} />
       </View>
 
-      <Text style={styles.note}>
-        This QR code is your digital badge — show it at the registration desk for check-in. You can
-        find it again any time from the Home tab under "My Badge." Use your email and password to
-        log back in later.
-      </Text>
+      <Text style={styles.note}>{t('registrationConfirmation.note')}</Text>
 
       <TouchableOpacity style={styles.doneBtn} onPress={onDone}>
-        <Text style={styles.doneBtnText}>Done — log me in</Text>
+        <Text style={styles.doneBtnText}>{t('registrationConfirmation.done')}</Text>
       </TouchableOpacity>
     </ScrollView>
   );

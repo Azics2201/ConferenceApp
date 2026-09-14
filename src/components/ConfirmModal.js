@@ -1,16 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { useApp } from '../context/AppContext';
 
 export default function ConfirmModal({
   visible,
   title,
   body,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   destructive = true,
   onCancel,
   onConfirm,
 }) {
+  const { t } = useApp();
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
@@ -19,10 +21,10 @@ export default function ConfirmModal({
           {!!body && <Text style={styles.body}>{body}</Text>}
           <View style={styles.actions}>
             <TouchableOpacity onPress={onCancel} style={styles.cancelBtn}>
-              <Text style={styles.cancelText}>{cancelLabel}</Text>
+              <Text style={styles.cancelText}>{cancelLabel || t('confirmModal.cancel')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onConfirm} style={[styles.confirmBtn, destructive && styles.confirmBtnDestructive]}>
-              <Text style={styles.confirmText}>{confirmLabel}</Text>
+              <Text style={styles.confirmText}>{confirmLabel || t('confirmModal.confirm')}</Text>
             </TouchableOpacity>
           </View>
         </View>

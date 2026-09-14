@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { useApp } from '../context/AppContext';
 
 export default function LoginScreen({ navigation }) {
-  const { login } = useApp();
+  const { login, t } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,7 +12,7 @@ export default function LoginScreen({ navigation }) {
   const onSubmit = async () => {
     setError('');
     if (!email.trim() || !password) {
-      setError('Please enter your email and password.');
+      setError(t('login.missingFields'));
       return;
     }
     setSubmitting(true);
@@ -26,33 +26,33 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Email</Text>
+      <Text style={styles.label}>{t('login.email')}</Text>
       <TextInput
         style={styles.input}
         value={email}
         onChangeText={setEmail}
-        placeholder="jane@example.com"
+        placeholder={t('login.emailPlaceholder')}
         keyboardType="email-address"
         autoCapitalize="none"
       />
 
-      <Text style={styles.label}>Password</Text>
+      <Text style={styles.label}>{t('login.password')}</Text>
       <TextInput
         style={styles.input}
         value={password}
         onChangeText={setPassword}
-        placeholder="Password"
+        placeholder={t('login.passwordPlaceholder')}
         secureTextEntry
       />
 
       {!!error && <Text style={styles.error}>{error}</Text>}
 
       <TouchableOpacity style={styles.submitBtn} onPress={onSubmit} disabled={submitting}>
-        <Text style={styles.submitText}>Log in</Text>
+        <Text style={styles.submitText}>{t('login.submit')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.registerLink}>
-        <Text style={styles.registerLinkText}>Don't have an account? Register</Text>
+        <Text style={styles.registerLinkText}>{t('login.noAccount')}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -7,6 +7,7 @@ import { ORG_INFO as SEED_ORG_INFO } from '../data/orgInfo';
 import { INITIAL_ANNOUNCEMENTS } from '../data/announcements';
 import { scheduleLocalNotification } from '../utils/notifications';
 import { generateId } from '../utils/id';
+import { DEFAULT_LANGUAGE, translate } from '../i18n';
 
 const STORAGE_KEYS = {
   ACCOUNTS: '@conference/accounts',
@@ -17,6 +18,7 @@ const STORAGE_KEYS = {
   SPEAKERS: '@conference/speakers',
   ORG_INFO: '@conference/org-info',
   CHECK_INS: '@conference/check-ins',
+  LANGUAGE: '@conference/language',
 };
 
 // Hardcoded for this prototype only — a real app would never ship credentials
@@ -35,6 +37,7 @@ export function AppProvider({ children }) {
   const [speakers, setSpeakers] = useState(SEED_SPEAKERS);
   const [orgInfo, setOrgInfo] = useState(SEED_ORG_INFO);
   const [checkIns, setCheckIns] = useState([]);
+  const [language, setLanguageState] = useState(DEFAULT_LANGUAGE);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,8 +52,9 @@ export function AppProvider({ children }) {
           AsyncStorage.getItem(STORAGE_KEYS.SPEAKERS),
           AsyncStorage.getItem(STORAGE_KEYS.ORG_INFO),
           AsyncStorage.getItem(STORAGE_KEYS.CHECK_INS),
+          AsyncStorage.getItem(STORAGE_KEYS.LANGUAGE),
         ]);
-        const [accRaw, sessRaw, favRaw, annRaw, sesRaw, spkRaw, orgRaw, chkRaw] = entries;
+        const [accRaw, sessRaw, favRaw, annRaw, sesRaw, spkRaw, orgRaw, chkRaw, langRaw] = entries;
         if (accRaw) setAccounts(JSON.parse(accRaw));
         if (sessRaw) setSession(JSON.parse(sessRaw));
         if (favRaw) setFavorites(JSON.parse(favRaw));
@@ -59,6 +63,7 @@ export function AppProvider({ children }) {
         if (spkRaw) setSpeakers(JSON.parse(spkRaw));
         if (orgRaw) setOrgInfo(JSON.parse(orgRaw));
         if (chkRaw) setCheckIns(JSON.parse(chkRaw));
+        if (langRaw) setLanguageState(langRaw);
       } catch (e) {
         console.warn('Failed to load stored data', e);
       } finally {
@@ -69,25 +74,34 @@ export function AppProvider({ children }) {
 
   const normalizeEmail = (email) => email.trim().toLowerCase();
 
+  const t = (key, vars) => translate(language, key, vars);
+
+  const setLanguage = async (code) => {
+    setLanguageState(code);
+    await AsyncStorage.setItem(STORAGE_KEYS.LANGUAGE, code);
+  };
+
   // Derived early so every mutation below can enforce it — this is what
   // actually stops an unauthorized user from calling an admin action, not
-  // just the UI hiding the button for it. Admin access only ever exists on
-  // web. A participant account can also carry isSubAdmin (granted by a full
-  // admin) to get the same access without using the shared admin/admin
-  // login — e.g. organizers who need to manage the event themselves.
+  // just the UI hiding the button for it. The shared admin/admin login only
+  // ever works on web (see loginAdmin below). A participant account can also
+  // carry isSubAdmin (granted by a full admin) to get the same access
+  // without using that shared login — e.g. organizers who need to check
+  // people in from a phone via the camera scanner, so sub-admin access is
+  // intentionally NOT restricted to web the way the shared login is.
   const currentUser =
     session && session.role === 'participant'
       ? accounts.find((a) => normalizeEmail(a.email) === normalizeEmail(session.email)) || null
       : null;
   const isAdminSession = !!session && session.role === 'admin' && Platform.OS === 'web';
-  const hasAdminAccess = (isAdminSession || (!!currentUser && !!currentUser.isSubAdmin)) && Platform.OS === 'web';
+  const hasAdminAccess = isAdminSession || (!!currentUser && !!currentUser.isSubAdmin);
   const isAuthenticated = !!currentUser || isAdminSession;
 
   // ---- Accounts & authentication ----
   const registerAccount = async (data) => {
     const email = normalizeEmail(data.email);
     if (accounts.some((a) => normalizeEmail(a.email) === email)) {
-      return { success: false, error: 'An account with this email already exists. Please log in instead.' };
+      return { success: false, error: t('auth.emailExists') };
     }
     const account = {
       ...data,
@@ -114,7 +128,7 @@ export function AppProvider({ children }) {
     const normalized = normalizeEmail(email);
     const account = accounts.find((a) => normalizeEmail(a.email) === normalized);
     if (!account || account.password !== password) {
-      return { success: false, error: 'Incorrect email or password.' };
+      return { success: false, error: t('auth.incorrectLogin') };
     }
     await persistSession({ role: 'participant', email: account.email });
     return { success: true };
@@ -122,10 +136,10 @@ export function AppProvider({ children }) {
 
   const loginAdmin = async (username, password) => {
     if (Platform.OS !== 'web') {
-      return { success: false, error: 'Administrator access is only available in the web version of this app.' };
+      return { success: false, error: t('auth.adminWebOnly') };
     }
     if (username.trim() !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
-      return { success: false, error: 'Incorrect username or password.' };
+      return { success: false, error: t('auth.incorrectAdminLogin') };
     }
     await persistSession({ role: 'admin' });
     return { success: true };
@@ -153,17 +167,17 @@ export function AppProvider({ children }) {
   // Admin editing an existing participant/staff account — including their
   // role, sub-admin flag, session picks, or resetting their password.
   const updateAccount = async (originalEmail, changes) => {
-    if (!hasAdminAccess) return { success: false, error: 'Not authorized.' };
+    if (!hasAdminAccess) return { success: false, error: t('auth.notAuthorized') };
     const normalizedOriginal = normalizeEmail(originalEmail);
     const idx = accounts.findIndex((a) => normalizeEmail(a.email) === normalizedOriginal);
-    if (idx === -1) return { success: false, error: 'Participant not found.' };
+    if (idx === -1) return { success: false, error: t('auth.participantNotFound') };
 
     const nextEmail = changes.email ? normalizeEmail(changes.email) : accounts[idx].email;
     if (
       nextEmail !== normalizedOriginal &&
       accounts.some((a) => normalizeEmail(a.email) === nextEmail)
     ) {
-      return { success: false, error: 'Another account already uses that email.' };
+      return { success: false, error: t('auth.emailInUse') };
     }
 
     const updated = { ...accounts[idx], ...changes, email: nextEmail };
@@ -213,6 +227,15 @@ export function AppProvider({ children }) {
     });
     await scheduleLocalNotification(title, body);
     return newItem;
+  };
+
+  const deleteAnnouncement = (id) => {
+    if (!hasAdminAccess) return;
+    setAnnouncements((prev) => {
+      const next = prev.filter((a) => a.id !== id);
+      AsyncStorage.setItem(STORAGE_KEYS.ANNOUNCEMENTS, JSON.stringify(next));
+      return next;
+    });
   };
 
   // ---- Program management (admin only) ----
@@ -285,6 +308,9 @@ export function AppProvider({ children }) {
 
   const value = {
     loading,
+    language,
+    setLanguage,
+    t,
     isAuthenticated,
     currentUser,
     isAdminSession,
@@ -300,6 +326,7 @@ export function AppProvider({ children }) {
     toggleFavorite,
     announcements,
     addAnnouncement,
+    deleteAnnouncement,
     sessions,
     addSession,
     updateSession,

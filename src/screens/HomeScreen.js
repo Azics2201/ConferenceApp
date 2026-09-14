@@ -6,7 +6,7 @@ import AnnouncementCard from '../components/AnnouncementCard';
 import ConfirmModal from '../components/ConfirmModal';
 
 export default function HomeScreen({ navigation }) {
-  const { currentUser, isAdminSession, announcements, logout } = useApp();
+  const { currentUser, isAdminSession, announcements, logout, t } = useApp();
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const confirmLogout = () => {
@@ -22,38 +22,38 @@ export default function HomeScreen({ navigation }) {
 
       {isAdminSession ? (
         <View style={styles.adminCard}>
-          <Text style={styles.adminTitle}>Logged in as Administrator</Text>
-          <Text style={styles.adminSubtitle}>Use the Admin tab below to manage the event.</Text>
+          <Text style={styles.adminTitle}>{t('home.adminLoggedInTitle')}</Text>
+          <Text style={styles.adminSubtitle}>{t('home.adminLoggedInSubtitle')}</Text>
           <TouchableOpacity onPress={() => setConfirmVisible(true)} style={{ marginTop: 10 }}>
-            <Text style={styles.logoutText}>Log out</Text>
+            <Text style={styles.logoutText}>{t('home.logout')}</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.regCard}>
-          <Text style={styles.regTitle}>You're registered</Text>
+          <Text style={styles.regTitle}>{t('home.registeredTitle')}</Text>
           <Text style={styles.regText}>{currentUser.firstName} {currentUser.lastName} · {currentUser.email}</Text>
           {currentUser.isSubAdmin && (
-            <Text style={styles.subAdminNote}>You also have administrator access — see the Admin tab below.</Text>
+            <Text style={styles.subAdminNote}>{t('home.subAdminNote')}</Text>
           )}
           <TouchableOpacity style={styles.badgeBtn} onPress={() => navigation.navigate('Badge')}>
-            <Text style={styles.badgeBtnText}>View my badge</Text>
+            <Text style={styles.badgeBtnText}>{t('home.viewBadge')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setConfirmVisible(true)} style={{ marginTop: 10 }}>
-            <Text style={styles.logoutText}>Log out</Text>
+            <Text style={styles.logoutText}>{t('home.logout')}</Text>
           </TouchableOpacity>
         </View>
       )}
 
       <View style={styles.quickLinks}>
-        <QuickLink label="Program" onPress={() => navigation.navigate('ProgramTab')} />
-        <QuickLink label="Speakers" onPress={() => navigation.navigate('SpeakersTab')} />
-        <QuickLink label="Venue & Info" onPress={() => navigation.navigate('InfoTab')} />
+        <QuickLink label={t('home.program')} onPress={() => navigation.navigate('ProgramTab')} />
+        <QuickLink label={t('home.speakers')} onPress={() => navigation.navigate('SpeakersTab')} />
+        <QuickLink label={t('home.venueInfo')} onPress={() => navigation.navigate('InfoTab')} />
       </View>
 
       <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionHeader}>Latest announcements</Text>
+        <Text style={styles.sectionHeader}>{t('home.latestAnnouncements')}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AnnouncementsTab')}>
-          <Text style={styles.seeAll}>See all</Text>
+          <Text style={styles.seeAll}>{t('home.seeAll')}</Text>
         </TouchableOpacity>
       </View>
       {announcements.slice(0, 2).map((a) => (
@@ -62,9 +62,9 @@ export default function HomeScreen({ navigation }) {
 
       <ConfirmModal
         visible={confirmVisible}
-        title="Log out?"
-        body="You'll need to log back in to see conference content."
-        confirmLabel="Log out"
+        title={t('home.logoutConfirmTitle')}
+        body={t('home.logoutConfirmBody')}
+        confirmLabel={t('home.logout')}
         onCancel={() => setConfirmVisible(false)}
         onConfirm={confirmLogout}
       />

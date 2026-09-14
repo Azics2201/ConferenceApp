@@ -9,7 +9,7 @@ import { exportParticipantsLocally } from '../utils/export';
 const ROLE_FILTERS = ['All', 'Attendee', 'Speaker', 'Press', 'Organizer'];
 
 export default function ManageParticipantsScreen() {
-  const { hasAdminAccess, accounts, sessions, deleteAccount, registerAccount, updateAccount } = useApp();
+  const { hasAdminAccess, accounts, sessions, deleteAccount, registerAccount, updateAccount, t } = useApp();
   const [query, setQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -40,9 +40,13 @@ export default function ManageParticipantsScreen() {
   const onExport = async () => {
     setExporting(true);
     setExportMessage('');
-    const result = await exportParticipantsLocally(filtered, sessions, 'participants.csv');
+    const result = await exportParticipantsLocally(filtered, sessions, 'participants.csv', t('manageParticipants.exportDialogTitle'));
     setExporting(false);
-    setExportMessage(result.success ? `Exported ${filtered.length} participant(s).` : `Export failed: ${result.error}`);
+    setExportMessage(
+      result.success
+        ? t('manageParticipants.exportSuccess', { count: filtered.length })
+        : t('manageParticipants.exportFailed', { error: result.error })
+    );
   };
 
   const openAdd = () => {
@@ -72,7 +76,7 @@ export default function ManageParticipantsScreen() {
   if (!hasAdminAccess) {
     return (
       <View style={styles.restricted}>
-        <Text style={styles.restrictedText}>Administrator access required.</Text>
+        <Text style={styles.restrictedText}>{t('manageParticipants.restricted')}</Text>
       </View>
     );
   }
@@ -86,14 +90,14 @@ export default function ManageParticipantsScreen() {
         ListHeaderComponent={
           <View>
             <TouchableOpacity style={styles.addBtn} onPress={openAdd}>
-              <Text style={styles.addBtnText}>+ Add person</Text>
+              <Text style={styles.addBtnText}>{t('manageParticipants.addPerson')}</Text>
             </TouchableOpacity>
 
             <TextInput
               style={styles.search}
               value={query}
               onChangeText={setQuery}
-              placeholder="Search by name, email, or organization"
+              placeholder={t('manageParticipants.search')}
             />
             <View style={styles.chipRow}>
               {ROLE_FILTERS.map((r) => (
@@ -102,27 +106,24 @@ export default function ManageParticipantsScreen() {
                   style={[styles.chip, roleFilter === r && styles.chipActive]}
                   onPress={() => setRoleFilter(r)}
                 >
-                  <Text style={[styles.chipText, roleFilter === r && styles.chipTextActive]}>{r}</Text>
+                  <Text style={[styles.chipText, roleFilter === r && styles.chipTextActive]}>{t(`roles.${r}`)}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             <View style={styles.summaryRow}>
               <Text style={styles.summaryText}>
-                {filtered.length} of {accounts.length} participant{accounts.length === 1 ? '' : 's'}
+                {t('manageParticipants.summary', { shown: filtered.length, total: accounts.length, plural: accounts.length === 1 ? '' : 's' })}
               </Text>
               <TouchableOpacity style={styles.exportBtn} onPress={onExport} disabled={exporting || filtered.length === 0}>
                 <Ionicons name="download-outline" size={14} color="#fff" />
-                <Text style={styles.exportBtnText}>{exporting ? 'Exporting…' : 'Export CSV'}</Text>
+                <Text style={styles.exportBtnText}>{exporting ? t('manageParticipants.exporting') : t('manageParticipants.exportCsv')}</Text>
               </TouchableOpacity>
             </View>
             {!!exportMessage && <Text style={styles.exportMessage}>{exportMessage}</Text>}
 
             {accounts.length === 0 && (
-              <Text style={styles.emptyNote}>
-                No participants yet. Registrations made on this device — including from earlier versions of the
-                app you tested — will show up here.
-              </Text>
+              <Text style={styles.emptyNote}>{t('manageParticipants.emptyNote')}</Text>
             )}
           </View>
         }
@@ -135,17 +136,17 @@ export default function ManageParticipantsScreen() {
                   <Text style={styles.rowName}>{item.firstName} {item.lastName}</Text>
                   {item.isSubAdmin && (
                     <View style={styles.subAdminBadge}>
-                      <Text style={styles.subAdminBadgeText}>Sub-admin</Text>
+                      <Text style={styles.subAdminBadgeText}>{t('manageParticipants.subAdmin')}</Text>
                     </View>
                   )}
                 </View>
                 <Text style={styles.rowMeta}>{item.email}</Text>
                 <Text style={styles.rowMeta}>
-                  {item.organization}{item.organization ? ' · ' : ''}{item.role}
+                  {item.organization}{item.organization ? ' · ' : ''}{t(`roles.${item.role}`)}
                 </Text>
-                <Text style={styles.rowDate}>Registered {new Date(item.registeredAt).toLocaleDateString()}</Text>
+                <Text style={styles.rowDate}>{t('manageParticipants.registered', { date: new Date(item.registeredAt).toLocaleDateString() })}</Text>
                 <Text style={styles.sessionsLabel}>
-                  {mySessions.length > 0 ? `Sessions: ${mySessions.join(', ')}` : 'No sessions selected'}
+                  {mySessions.length > 0 ? t('manageParticipants.sessionsList', { sessions: mySessions.join(', ') }) : t('manageParticipants.noSessions')}
                 </Text>
               </View>
               <TouchableOpacity onPress={() => openEdit(item)} style={styles.iconBtn}>
@@ -170,9 +171,9 @@ export default function ManageParticipantsScreen() {
 
       <ConfirmModal
         visible={!!deleteTarget}
-        title="Delete participant"
-        body={deleteTarget ? `Remove "${deleteTarget.firstName} ${deleteTarget.lastName}" (${deleteTarget.email})? This cannot be undone.` : ''}
-        confirmLabel="Delete"
+        title={t('manageParticipants.deleteTitle')}
+        body={deleteTarget ? t('manageParticipants.deleteBody', { name: `${deleteTarget.firstName} ${deleteTarget.lastName}`, email: deleteTarget.email }) : ''}
+        confirmLabel={t('manageParticipants.deleteLabel')}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={confirmDelete}
       />

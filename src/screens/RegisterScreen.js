@@ -13,10 +13,10 @@ import { useApp } from '../context/AppContext';
 import { TERMS_TEXT } from '../data/terms';
 import CheckboxRow from '../components/CheckboxRow';
 
-const ROLES = ['Attendee', 'Speaker', 'Press', 'Organizer'];
+const ROLES = ['Attendee', 'Press'];
 
 export default function RegisterScreen({ navigation }) {
-  const { registerAccount, sessions } = useApp();
+  const { registerAccount, sessions, t } = useApp();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -46,19 +46,19 @@ export default function RegisterScreen({ navigation }) {
 
   const onSubmit = async () => {
     if (!firstName.trim() || !lastName.trim()) {
-      return Alert.alert('Missing info', 'Please enter your first and last name.');
+      return Alert.alert(t('register.missingNameTitle'), t('register.missingName'));
     }
     if (!isValidEmail) {
-      return Alert.alert('Missing info', 'Please enter a valid email address.');
+      return Alert.alert(t('register.missingNameTitle'), t('register.invalidEmail'));
     }
     if (password.length < 4) {
-      return Alert.alert('Password too short', 'Please choose a password with at least 4 characters.');
+      return Alert.alert(t('register.passwordTooShortTitle'), t('register.passwordTooShort'));
     }
     if (password !== confirmPassword) {
-      return Alert.alert('Passwords don\'t match', 'Please make sure both password fields match.');
+      return Alert.alert(t('register.passwordMismatchTitle'), t('register.passwordMismatch'));
     }
     if (!termsAccepted) {
-      return Alert.alert('Terms required', 'Please review and accept the terms before continuing.');
+      return Alert.alert(t('register.termsRequiredTitle'), t('register.termsRequired'));
     }
 
     const result = await registerAccount({
@@ -77,7 +77,7 @@ export default function RegisterScreen({ navigation }) {
     });
 
     if (!result.success) {
-      return Alert.alert('Could not register', result.error);
+      return Alert.alert(t('register.couldNotRegisterTitle'), result.error);
     }
 
     navigation.replace('RegistrationConfirmation', { account: result.account });
@@ -85,59 +85,59 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
-      <Text style={styles.label}>First name *</Text>
-      <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} placeholder="Jane" />
+      <Text style={styles.label}>{t('register.firstName')}</Text>
+      <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} placeholder={t('register.firstNamePlaceholder')} />
 
-      <Text style={styles.label}>Last name *</Text>
-      <TextInput style={styles.input} value={lastName} onChangeText={setLastName} placeholder="Doe" />
+      <Text style={styles.label}>{t('register.lastName')}</Text>
+      <TextInput style={styles.input} value={lastName} onChangeText={setLastName} placeholder={t('register.lastNamePlaceholder')} />
 
-      <Text style={styles.label}>Organization / institution</Text>
-      <TextInput style={styles.input} value={organization} onChangeText={setOrganization} placeholder="Company / University" />
+      <Text style={styles.label}>{t('register.organization')}</Text>
+      <TextInput style={styles.input} value={organization} onChangeText={setOrganization} placeholder={t('register.organizationPlaceholder')} />
 
-      <Text style={styles.label}>Job title / position</Text>
-      <TextInput style={styles.input} value={jobTitle} onChangeText={setJobTitle} placeholder="e.g. Product Manager" />
+      <Text style={styles.label}>{t('register.jobTitle')}</Text>
+      <TextInput style={styles.input} value={jobTitle} onChangeText={setJobTitle} placeholder={t('register.jobTitlePlaceholder')} />
 
-      <Text style={styles.label}>Email *</Text>
+      <Text style={styles.label}>{t('register.email')}</Text>
       <TextInput
         style={styles.input}
         value={email}
         onChangeText={setEmail}
-        placeholder="jane@example.com"
+        placeholder={t('register.emailPlaceholder')}
         keyboardType="email-address"
         autoCapitalize="none"
       />
 
-      <Text style={styles.label}>Phone number</Text>
-      <TextInput style={styles.input} value={phone} onChangeText={setPhone} placeholder="+420 ..." keyboardType="phone-pad" />
+      <Text style={styles.label}>{t('register.phone')}</Text>
+      <TextInput style={styles.input} value={phone} onChangeText={setPhone} placeholder={t('register.phonePlaceholder')} keyboardType="phone-pad" />
 
-      <Text style={styles.label}>Password *</Text>
+      <Text style={styles.label}>{t('register.password')}</Text>
       <TextInput
         style={styles.input}
         value={password}
         onChangeText={setPassword}
-        placeholder="At least 4 characters"
+        placeholder={t('register.passwordPlaceholder')}
         secureTextEntry
       />
 
-      <Text style={styles.label}>Confirm password *</Text>
+      <Text style={styles.label}>{t('register.confirmPassword')}</Text>
       <TextInput
         style={styles.input}
         value={confirmPassword}
         onChangeText={setConfirmPassword}
-        placeholder="Re-enter your password"
+        placeholder={t('register.confirmPasswordPlaceholder')}
         secureTextEntry
       />
 
-      <Text style={styles.label}>Role</Text>
+      <Text style={styles.label}>{t('register.role')}</Text>
       <View style={styles.chipRow}>
         {ROLES.map((r) => (
           <TouchableOpacity key={r} style={[styles.chip, role === r && styles.chipActive]} onPress={() => setRole(r)}>
-            <Text style={[styles.chipText, role === r && styles.chipTextActive]}>{r}</Text>
+            <Text style={[styles.chipText, role === r && styles.chipTextActive]}>{t(`roles.${r}`)}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <Text style={styles.sectionLabel}>Which sessions would you like to attend?</Text>
+      <Text style={styles.sectionLabel}>{t('register.sessionsQuestion')}</Text>
       {sessionsByDay.map((group) => (
         <View key={group.day} style={{ marginBottom: 8 }}>
           <Text style={styles.dayLabel}>{group.day}</Text>
@@ -152,32 +152,32 @@ export default function RegisterScreen({ navigation }) {
         </View>
       ))}
 
-      <Text style={styles.label}>Additional information for the organizer</Text>
+      <Text style={styles.label}>{t('register.additionalInfo')}</Text>
       <TextInput
         style={[styles.input, styles.multiline]}
         value={additionalInfo}
         onChangeText={setAdditionalInfo}
-        placeholder="Anything else the organizers should know"
+        placeholder={t('register.additionalInfoPlaceholder')}
         multiline
       />
 
-      <Text style={styles.label}>Special requests (dietary, accessibility, other)</Text>
+      <Text style={styles.label}>{t('register.specialRequests')}</Text>
       <TextInput
         style={[styles.input, styles.multiline]}
         value={specialRequests}
         onChangeText={setSpecialRequests}
-        placeholder="e.g. vegetarian meals, wheelchair access"
+        placeholder={t('register.specialRequestsPlaceholder')}
         multiline
       />
 
       <View style={styles.termsBox}>
         <CheckboxRow
-          label="I have read and agree to the Terms of Participation and Personal Data Processing"
+          label={t('register.termsAgree')}
           checked={termsAccepted}
           onPress={() => setTermsAccepted((v) => !v)}
         />
         <TouchableOpacity onPress={() => setTermsModalVisible(true)}>
-          <Text style={styles.readTerms}>Read the full terms</Text>
+          <Text style={styles.readTerms}>{t('register.readTerms')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -186,7 +186,7 @@ export default function RegisterScreen({ navigation }) {
         onPress={onSubmit}
         disabled={!termsAccepted}
       >
-        <Text style={styles.submitText}>Complete registration</Text>
+        <Text style={styles.submitText}>{t('register.submit')}</Text>
       </TouchableOpacity>
 
       <Modal visible={termsModalVisible} animationType="slide">
@@ -195,7 +195,7 @@ export default function RegisterScreen({ navigation }) {
             <Text style={styles.termsText}>{TERMS_TEXT}</Text>
           </ScrollView>
           <TouchableOpacity style={styles.closeBtn} onPress={() => setTermsModalVisible(false)}>
-            <Text style={styles.closeBtnText}>Close</Text>
+            <Text style={styles.closeBtnText}>{t('common.close')}</Text>
           </TouchableOpacity>
         </View>
       </Modal>

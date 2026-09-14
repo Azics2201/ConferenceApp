@@ -1,20 +1,22 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useApp } from '../context/AppContext';
 
-export function timeAgo(iso) {
+export function timeAgo(iso, t) {
   const diffMs = Date.now() - new Date(iso).getTime();
   const mins = Math.round(diffMs / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('common.justNow');
+  if (mins < 60) return t('common.minutesAgo', { n: mins });
   const hours = Math.round(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t('common.hoursAgo', { n: hours });
   const days = Math.round(hours / 24);
-  return `${days}d ago`;
+  return t('common.daysAgo', { n: days });
 }
 
 const TRUNCATE_LINES = 3;
 
 export default function AnnouncementCard({ announcement, audienceLabel, onPress }) {
+  const { t } = useApp();
   const isHigh = announcement.priority === 'high';
   const isLong = announcement.body.length > 160 || announcement.body.split('\n').length > TRUNCATE_LINES;
 
@@ -26,13 +28,13 @@ export default function AnnouncementCard({ announcement, audienceLabel, onPress 
     >
       <View style={styles.headerRow}>
         <Text style={styles.title}>{announcement.title}</Text>
-        <Text style={styles.time}>{timeAgo(announcement.timestamp)}</Text>
+        <Text style={styles.time}>{timeAgo(announcement.timestamp, t)}</Text>
       </View>
       <Text style={styles.body} numberOfLines={TRUNCATE_LINES}>
         {announcement.body}
       </Text>
-      {isLong && onPress && <Text style={styles.readMore}>Read more</Text>}
-      {!!audienceLabel && <Text style={styles.audience}>To: {audienceLabel}</Text>}
+      {isLong && onPress && <Text style={styles.readMore}>{t('common.readMore')}</Text>}
+      {!!audienceLabel && <Text style={styles.audience}>{t('announcements.to', { audience: audienceLabel })}</Text>}
     </TouchableOpacity>
   );
 }

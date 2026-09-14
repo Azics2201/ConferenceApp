@@ -2,26 +2,27 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, ScrollView } from 'react-native';
 import { useApp } from '../context/AppContext';
 import AnnouncementCard, { timeAgo } from '../components/AnnouncementCard';
+import ConfirmModal from '../components/ConfirmModal';
 
 const ROLES = ['Attendee', 'Speaker', 'Press', 'Organizer'];
-const AUDIENCE_TYPES = [
-  { key: 'all', label: 'All participants' },
-  { key: 'session', label: 'By session' },
-  { key: 'role', label: 'By role' },
-];
 
-function describeAudience(audience, sessions) {
-  if (!audience || audience.type === 'all') return 'All participants';
-  if (audience.type === 'role') return `${audience.role} only`;
+function describeAudience(audience, sessions, t) {
+  if (!audience || audience.type === 'all') return t('announcements.allParticipants');
+  if (audience.type === 'role') return t('announcements.roleOnly', { role: t(`roles.${audience.role}`) });
   if (audience.type === 'session') {
     const s = sessions.find((x) => x.id === audience.sessionId);
-    return s ? `Attendees of "${s.title}"` : 'Attendees of a specific session';
+    return s ? t('announcements.attendeesOf', { title: s.title }) : t('announcements.attendeesOfSpecificSession');
   }
-  return 'All participants';
+  return t('announcements.allParticipants');
 }
 
 export default function ManageAnnouncementsScreen() {
-  const { hasAdminAccess, announcements, addAnnouncement, sessions } = useApp();
+  const { hasAdminAccess, announcements, addAnnouncement, deleteAnnouncement, sessions, t } = useApp();
+  const AUDIENCE_TYPES = [
+    { key: 'all', label: t('manageAnnouncements.audienceAll') },
+    { key: 'session', label: t('manageAnnouncements.audienceBySession') },
+    { key: 'role', label: t('manageAnnouncements.audienceByRole') },
+  ];
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -29,6 +30,13 @@ export default function ManageAnnouncementsScreen() {
   const [audienceRole, setAudienceRole] = useState(ROLES[0]);
   const [audienceSessionId, setAudienceSessionId] = useState(sessions[0]?.id);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+  const confirmDelete = () => {
+    if (deleteTarget) deleteAnnouncement(deleteTarget.id);
+    setDeleteTarget(null);
+    setSelectedAnnouncement(null);
+  };
 
   const onSend = async () => {
     if (!hasAdminAccess) return;
@@ -49,7 +57,7 @@ export default function ManageAnnouncementsScreen() {
   if (!hasAdminAccess) {
     return (
       <View style={styles.restricted}>
-        <Text style={styles.restrictedText}>Administrator access required.</Text>
+        <Text style={styles.restrictedText}>{t('manageAnnouncements.restricted')}</Text>
       </View>
     );
   }
@@ -67,18 +75,15 @@ export default function ManageAnnouncementsScreen() {
         renderItem={({ item }) => (
           <AnnouncementCard
             announcement={item}
-            audienceLabel={describeAudience(item.audience, sessions)}
+            audienceLabel={describeAudience(item.audience, sessions, t)}
             onPress={() => setSelectedAnnouncement(item)}
           />
         )}
         ListHeaderComponent={
           <View>
-            <Text style={styles.note}>
-              Every announcement ever sent, regardless of audience targeting. Participants only see this same list
-              on the Updates tab (targeting is a label here, not an actual per-device filter — see the README).
-            </Text>
+            <Text style={styles.note}>{t('manageAnnouncements.note')}</Text>
             <TouchableOpacity style={styles.demoBtn} onPress={() => setModalVisible(true)}>
-              <Text style={styles.demoBtnText}>+ Send an announcement</Text>
+              <Text style={styles.demoBtnText}>{t('manageAnnouncements.send')}</Text>
             </TouchableOpacity>
           </View>
         }
@@ -91,34 +96,51 @@ export default function ManageAnnouncementsScreen() {
               <ScrollView>
                 <Text style={styles.detailTitle}>{selectedAnnouncement.title}</Text>
                 <Text style={styles.detailMeta}>
-                  {timeAgo(selectedAnnouncement.timestamp)} · {new Date(selectedAnnouncement.timestamp).toLocaleString()}
+                  {timeAgo(selectedAnnouncement.timestamp, t)} · {new Date(selectedAnnouncement.timestamp).toLocaleString()}
                 </Text>
-                <Text style={styles.detailAudience}>To: {describeAudience(selectedAnnouncement.audience, sessions)}</Text>
+                <Text style={styles.detailAudience}>{t('announcements.to', { audience: describeAudience(selectedAnnouncement.audience, sessions, t) })}</Text>
                 <Text style={styles.detailBody}>{selectedAnnouncement.body}</Text>
               </ScrollView>
             )}
-            <TouchableOpacity style={styles.closeDetailBtn} onPress={() => setSelectedAnnouncement(null)}>
-              <Text style={styles.closeDetailText}>Close</Text>
-            </TouchableOpacity>
+            <View style={styles.detailActions}>
+              <TouchableOpacity
+                style={styles.deleteDetailBtn}
+                onPress={() => setDeleteTarget(selectedAnnouncement)}
+              >
+                <Text style={styles.deleteDetailText}>{t('manageAnnouncements.deleteLabel')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.closeDetailBtn} onPress={() => setSelectedAnnouncement(null)}>
+                <Text style={styles.closeDetailText}>{t('common.close')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
+
+      <ConfirmModal
+        visible={!!deleteTarget}
+        title={t('manageAnnouncements.deleteTitle')}
+        body={deleteTarget ? t('manageAnnouncements.deleteBody', { title: deleteTarget.title }) : ''}
+        confirmLabel={t('manageAnnouncements.deleteLabel')}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
 
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <ScrollView>
-              <Text style={styles.modalTitle}>Send announcement</Text>
-              <TextInput style={styles.input} placeholder="Title" value={title} onChangeText={setTitle} />
+              <Text style={styles.modalTitle}>{t('manageAnnouncements.sendTitle')}</Text>
+              <TextInput style={styles.input} placeholder={t('manageAnnouncements.titlePlaceholder')} value={title} onChangeText={setTitle} />
               <TextInput
                 style={[styles.input, { height: 80 }]}
-                placeholder="Message"
+                placeholder={t('manageAnnouncements.messagePlaceholder')}
                 value={body}
                 onChangeText={setBody}
                 multiline
               />
 
-              <Text style={styles.label}>Send to</Text>
+              <Text style={styles.label}>{t('manageAnnouncements.sendToLabel')}</Text>
               <View style={styles.chipRow}>
                 {AUDIENCE_TYPES.map((a) => (
                   <TouchableOpacity
@@ -139,7 +161,7 @@ export default function ManageAnnouncementsScreen() {
                       style={[styles.chip, audienceRole === r && styles.chipActive]}
                       onPress={() => setAudienceRole(r)}
                     >
-                      <Text style={[styles.chipText, audienceRole === r && styles.chipTextActive]}>{r}</Text>
+                      <Text style={[styles.chipText, audienceRole === r && styles.chipTextActive]}>{t(`roles.${r}`)}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -159,17 +181,13 @@ export default function ManageAnnouncementsScreen() {
                 </View>
               )}
 
-              <Text style={styles.hint}>
-                In production, targeting would filter real stored push tokens on a server. Here it's a demo — the
-                notification still fires locally so you can see the flow, and this admin view always shows every
-                announcement regardless of targeting.
-              </Text>
+              <Text style={styles.hint}>{t('manageAnnouncements.hint')}</Text>
               <View style={styles.modalActions}>
                 <TouchableOpacity onPress={() => setModalVisible(false)}>
-                  <Text style={styles.cancel}>Cancel</Text>
+                  <Text style={styles.cancel}>{t('common.cancel')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onSend}>
-                  <Text style={styles.send}>Send</Text>
+                  <Text style={styles.send}>{t('manageAnnouncements.sendAction')}</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -208,6 +226,9 @@ const styles = StyleSheet.create({
   detailMeta: { fontSize: 12, color: '#9CA3AF', marginBottom: 4 },
   detailAudience: { fontSize: 12, color: '#4D92CF', fontWeight: '600', marginBottom: 14 },
   detailBody: { fontSize: 14, color: '#374151', lineHeight: 21 },
-  closeDetailBtn: { paddingVertical: 14, alignItems: 'center', borderTopWidth: 1, borderTopColor: '#E5E7EB', marginTop: 12 },
+  detailActions: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#E5E7EB', marginTop: 12 },
+  deleteDetailBtn: { flex: 1, paddingVertical: 14, alignItems: 'center' },
+  deleteDetailText: { color: '#DC2626', fontWeight: '700', fontSize: 15 },
+  closeDetailBtn: { flex: 1, paddingVertical: 14, alignItems: 'center', borderLeftWidth: 1, borderLeftColor: '#E5E7EB' },
   closeDetailText: { color: '#4D92CF', fontWeight: '700', fontSize: 15 },
 });

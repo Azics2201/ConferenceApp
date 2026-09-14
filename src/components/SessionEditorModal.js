@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import CheckboxRow from './CheckboxRow';
+import { useApp } from '../context/AppContext';
 
 const emptyForm = { title: '', day: '', startTime: '', endTime: '', room: '', track: '', description: '', speakerIds: [] };
 
 export default function SessionEditorModal({ visible, initialSession, speakers, onCancel, onSave }) {
+  const { t } = useApp();
   const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
@@ -30,32 +32,32 @@ export default function SessionEditorModal({ visible, initialSession, speakers, 
       <View style={styles.overlay}>
         <View style={styles.card}>
           <ScrollView>
-            <Text style={styles.title}>{initialSession ? 'Edit session' : 'Add session'}</Text>
+            <Text style={styles.title}>{initialSession ? t('sessionEditor.editTitle') : t('sessionEditor.addTitle')}</Text>
 
-            <Text style={styles.label}>Title</Text>
-            <TextInput style={styles.input} value={form.title} onChangeText={setField('title')} placeholder="Session title" />
+            <Text style={styles.label}>{t('sessionEditor.title')}</Text>
+            <TextInput style={styles.input} value={form.title} onChangeText={setField('title')} placeholder={t('sessionEditor.titlePlaceholder')} />
 
-            <Text style={styles.label}>Day (e.g. "Day 1 — Oct 14")</Text>
-            <TextInput style={styles.input} value={form.day} onChangeText={setField('day')} placeholder="Day 1 — Oct 14" />
+            <Text style={styles.label}>{t('sessionEditor.day')}</Text>
+            <TextInput style={styles.input} value={form.day} onChangeText={setField('day')} placeholder={t('sessionEditor.dayPlaceholder')} />
 
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 1, marginRight: 8 }}>
-                <Text style={styles.label}>Start</Text>
+                <Text style={styles.label}>{t('sessionEditor.start')}</Text>
                 <TextInput style={styles.input} value={form.startTime} onChangeText={setField('startTime')} placeholder="09:00" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.label}>End</Text>
+                <Text style={styles.label}>{t('sessionEditor.end')}</Text>
                 <TextInput style={styles.input} value={form.endTime} onChangeText={setField('endTime')} placeholder="09:45" />
               </View>
             </View>
 
-            <Text style={styles.label}>Room</Text>
-            <TextInput style={styles.input} value={form.room} onChangeText={setField('room')} placeholder="Main Hall" />
+            <Text style={styles.label}>{t('sessionEditor.room')}</Text>
+            <TextInput style={styles.input} value={form.room} onChangeText={setField('room')} placeholder={t('sessionEditor.roomPlaceholder')} />
 
-            <Text style={styles.label}>Track</Text>
-            <TextInput style={styles.input} value={form.track} onChangeText={setField('track')} placeholder="Engineering" />
+            <Text style={styles.label}>{t('sessionEditor.track')}</Text>
+            <TextInput style={styles.input} value={form.track} onChangeText={setField('track')} placeholder={t('sessionEditor.trackPlaceholder')} />
 
-            <Text style={styles.label}>Description</Text>
+            <Text style={styles.label}>{t('sessionEditor.description')}</Text>
             <TextInput
               style={[styles.input, styles.multiline]}
               value={form.description}
@@ -63,7 +65,7 @@ export default function SessionEditorModal({ visible, initialSession, speakers, 
               multiline
             />
 
-            <Text style={styles.label}>Speakers</Text>
+            <Text style={styles.label}>{t('sessionEditor.speakers')}</Text>
             {speakers.map((sp) => (
               <CheckboxRow
                 key={sp.id}
@@ -75,10 +77,10 @@ export default function SessionEditorModal({ visible, initialSession, speakers, 
 
             <View style={styles.actions}>
               <TouchableOpacity onPress={onCancel}>
-                <Text style={styles.cancel}>Cancel</Text>
+                <Text style={styles.cancel}>{t('sessionEditor.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleSave}>
-                <Text style={styles.save}>Save</Text>
+                <Text style={styles.save}>{t('sessionEditor.save')}</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

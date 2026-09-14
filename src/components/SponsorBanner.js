@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SPONSORS } from '../data/sponsors';
+import { useApp } from '../context/AppContext';
 
 const CYCLE_MS = 8000;
 
@@ -9,6 +10,7 @@ const CYCLE_MS = 8000;
 // navigator so it never overlaps screen content). `orientation="vertical"`
 // renders a sidebar strip (web, left/right of the main content column).
 export default function SponsorBanner({ orientation = 'horizontal' }) {
+  const { t } = useApp();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export default function SponsorBanner({ orientation = 'horizontal' }) {
   if (orientation === 'vertical') {
     return (
       <View style={styles.verticalBar}>
-        <Text style={styles.verticalLabel}>Sponsored{'\n'}by</Text>
+        <Text style={styles.verticalLabel}>{t('sponsorBanner.sponsoredBy')}</Text>
         <View style={[styles.badge, styles.verticalBadge, { backgroundColor: sponsor.color }]}>
           <Text style={styles.badgeText}>{sponsor.name}</Text>
         </View>
@@ -34,7 +36,7 @@ export default function SponsorBanner({ orientation = 'horizontal' }) {
   return (
     <SafeAreaView edges={['top']} style={styles.horizontalSafeArea}>
       <View style={styles.horizontalBar}>
-        <Text style={styles.horizontalLabel}>Sponsored by</Text>
+        <Text style={styles.horizontalLabel}>{t('sponsorBanner.sponsoredBy')}</Text>
         <View style={[styles.badge, { backgroundColor: sponsor.color }]}>
           <Text style={styles.badgeText}>{sponsor.name}</Text>
         </View>

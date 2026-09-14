@@ -82,17 +82,61 @@ sessions/speakers/participants.
 - `session`: `{ role: 'participant', email }` | `{ role: 'admin' }` | `null`.
 - `currentUser`: derived — the account matching a participant session.
 - `isAdminSession`: true only for the hardcoded shared `admin`/`admin` login,
-  and only on web (`Platform.OS === 'web'`).
-- `hasAdminAccess`: `isAdminSession OR (currentUser.isSubAdmin)`, also
-  web-only. **This is the flag actually checked inside every admin mutation**
-  (add/edit/delete session, speaker, org info, announcement, account,
-  check-in) — not just in the screens that show the buttons for them. If you
-  add a new admin action, guard it the same way at the context-function
-  level, not only in the UI. A participant successfully posting an
-  announcement was a real bug caused by skipping this once already.
+  and only on web (`Platform.OS === 'web'`) — `loginAdmin` itself refuses on
+  other platforms.
+- `hasAdminAccess`: `isAdminSession OR (currentUser.isSubAdmin)`. Only the
+  `isAdminSession` half is web-only (inherited from that flag); the
+  sub-admin half is **not** platform-restricted — sub-admins can log in and
+  use admin tools (including the camera check-in scanner) from mobile too,
+  not just web. **This is the flag actually checked inside every admin
+  mutation** (add/edit/delete session, speaker, org info, announcement,
+  account, check-in) — not just in the screens that show the buttons for
+  them. If you add a new admin action, guard it the same way at the
+  context-function level, not only in the UI. A participant successfully
+  posting an announcement was a real bug caused by skipping this once
+  already.
 - Sub-admins are participant accounts with `isSubAdmin: true`, created via
   Manage Participants → "+ Add person" (admin creates accounts on someone's
-  behalf, including setting their password directly).
+  behalf, including setting their password directly). They log in through
+  the normal participant Login screen (not the web-only Administrator
+  login) on either web or mobile.
+
+## Internationalization (English + Czech)
+
+- `src/i18n/en.js` and `src/i18n/cs.js` are flat-nested dictionaries (e.g.
+  `register.firstName`), `src/i18n/index.js` exports `LANGUAGES` (the
+  switcher's option list), `DEFAULT_LANGUAGE` ('en'), and `translate(lang,
+  key, vars)` — dot-path lookup with `{{var}}` interpolation, falling back to
+  English then to the raw key if a key is missing in the active language.
+- `AppContext` owns the active `language`, persists it to AsyncStorage the
+  same way as every other piece of state, and exposes `t(key, vars)` (a thin
+  wrapper around `translate`) plus `setLanguage(code)`. Every screen/component
+  that renders user-facing text pulls `t` from `useApp()` — this is a plain
+  function, not a hook, so it's safe to call conditionally or inside loops
+  (e.g. mapping role chips through `t(\`roles.${r}\`)`).
+- `src/components/LanguageButton.js` is the switcher: a small floating pill
+  (globe flag + code) rendered once in `App.js`'s `AppShell`, inside the same
+  flex wrapper as `RootNavigator` so it sits over screen content in a corner
+  rather than reserving layout space — deliberately different from the
+  sponsor banner's "never overlay content" rule, since this button is small,
+  persistent, and the whole point is being reachable from anywhere including
+  the pre-auth Welcome screen. Tapping it opens a bottom-sheet modal (the
+  same pattern as every other picker in this app), not an inline dropdown.
+- Scope boundary: only interface chrome is translated (labels, buttons,
+  headers, alerts, validation messages). Admin-entered *content* — session/
+  speaker/org-info text, announcement bodies, the Terms of Participation
+  (`src/data/terms.js`) — stays in whatever language the admin typed it in;
+  translating that would need a real multi-locale content model, which this
+  prototype doesn't have. Role values (`Attendee`/`Speaker`/`Press`/
+  `Organizer`) are also stored and compared in English internally (matching,
+  filtering, CSV export) — only their *displayed* label goes through
+  `t(\`roles.${role}\`)`. Don't translate the stored value itself; it'd break
+  every place that compares against the literal English string.
+- Adding a language: create `src/i18n/<code>.js` mirroring `en.js`'s keys,
+  import and register it in `TRANSLATIONS` in `src/i18n/index.js`, and add an
+  entry to `LANGUAGES` with a `nativeName` (shown in that language, not the
+  currently active one, so people can find their language even when the UI
+  is currently in a language they can't read).
 
 ## AsyncStorage persists across code updates — this is expected, not a bug
 

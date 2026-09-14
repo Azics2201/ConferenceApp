@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppProvider } from './src/context/AppContext';
 import RootNavigator from './src/navigation';
 import SponsorBanner from './src/components/SponsorBanner';
+import LanguageButton from './src/components/LanguageButton';
 
 // Below this viewport width there isn't room for two 110px sidebars plus
 // content without squeezing the app itself, so the side banners only show
@@ -37,6 +38,7 @@ function AppShell() {
         {showSideBanners && <SponsorBanner orientation="vertical" />}
         <View style={{ flex: 1, minWidth: 0 }}>
           <RootNavigator />
+          <LanguageButton />
         </View>
         {showSideBanners && <SponsorBanner orientation="vertical" />}
       </View>
@@ -48,6 +50,7 @@ function AppShell() {
       <SponsorBanner orientation="horizontal" />
       <View style={{ flex: 1 }}>
         <RootNavigator />
+        <LanguageButton />
       </View>
     </View>
   );

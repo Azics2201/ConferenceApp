@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { EVENT } from '../data/event';
+import { useApp } from '../context/AppContext';
 
 const AIR_DEFENCE_LOGO = require('../../assets/department-of-air-defence-logo.png');
 
 export default function WelcomeScreen({ navigation }) {
+  const { t } = useApp();
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -18,16 +20,16 @@ export default function WelcomeScreen({ navigation }) {
 
         <View style={styles.actions}>
           <TouchableOpacity style={styles.primaryBtn} onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.primaryBtnText}>Register</Text>
+            <Text style={styles.primaryBtnText}>{t('welcome.register')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.secondaryBtn} onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.secondaryBtnText}>Log in</Text>
+            <Text style={styles.secondaryBtnText}>{t('welcome.login')}</Text>
           </TouchableOpacity>
 
           {Platform.OS === 'web' && (
             <TouchableOpacity style={styles.adminBtn} onPress={() => navigation.navigate('AdminLogin')}>
-              <Text style={styles.adminBtnText}>Administrator login</Text>
+              <Text style={styles.adminBtnText}>{t('welcome.adminLogin')}</Text>
             </TouchableOpacity>
           )}
         </View>

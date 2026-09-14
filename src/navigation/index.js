@@ -42,58 +42,63 @@ const SpeakersStack = createStackNavigator();
 const stackScreenOptions = { cardStyle: { flex: 1 } };
 
 function AuthStackNavigator() {
+  const { t } = useApp();
   return (
     <AuthStack.Navigator screenOptions={stackScreenOptions}>
       <AuthStack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
-      <AuthStack.Screen name="Register" component={RegisterScreen} options={{ title: 'Register' }} />
-      <AuthStack.Screen name="Login" component={LoginScreen} options={{ title: 'Log In' }} />
-      <AuthStack.Screen name="AdminLogin" component={AdminLoginScreen} options={{ title: 'Administrator Login' }} />
+      <AuthStack.Screen name="Register" component={RegisterScreen} options={{ title: t('nav.register') }} />
+      <AuthStack.Screen name="Login" component={LoginScreen} options={{ title: t('nav.login') }} />
+      <AuthStack.Screen name="AdminLogin" component={AdminLoginScreen} options={{ title: t('nav.adminLogin') }} />
       <AuthStack.Screen
         name="RegistrationConfirmation"
         component={RegistrationConfirmationScreen}
-        options={{ title: 'Registered', headerLeft: () => null, gestureEnabled: false }}
+        options={{ title: t('nav.registered'), headerLeft: () => null, gestureEnabled: false }}
       />
     </AuthStack.Navigator>
   );
 }
 
 function HomeStackNavigator() {
+  const { t } = useApp();
   return (
     <HomeStack.Navigator screenOptions={stackScreenOptions}>
-      <HomeStack.Screen name="Home" component={HomeScreen} options={{ title: 'TechConnect 2026' }} />
-      <HomeStack.Screen name="Badge" component={BadgeScreen} options={{ title: 'My Badge' }} />
+      <HomeStack.Screen name="Home" component={HomeScreen} options={{ title: t('nav.homeTitle') }} />
+      <HomeStack.Screen name="Badge" component={BadgeScreen} options={{ title: t('nav.myBadge') }} />
     </HomeStack.Navigator>
   );
 }
 
 function AdminStackNavigator() {
+  const { t } = useApp();
   return (
     <AdminStack.Navigator screenOptions={stackScreenOptions}>
-      <AdminStack.Screen name="AdminHome" component={AdminHomeScreen} options={{ title: 'Organizer Tools' }} />
-      <AdminStack.Screen name="ManageParticipants" component={ManageParticipantsScreen} options={{ title: 'Participants' }} />
-      <AdminStack.Screen name="ManageProgram" component={ManageProgramScreen} options={{ title: 'Manage Program' }} />
-      <AdminStack.Screen name="ManageSpeakers" component={ManageSpeakersScreen} options={{ title: 'Manage Speakers' }} />
-      <AdminStack.Screen name="ManageOrgInfo" component={ManageOrgInfoScreen} options={{ title: 'Manage Org Info' }} />
-      <AdminStack.Screen name="ManageAnnouncements" component={ManageAnnouncementsScreen} options={{ title: 'Announcements' }} />
-      <AdminStack.Screen name="CheckInScanner" component={CheckInScannerScreen} options={{ title: 'Check-In Scanner' }} />
+      <AdminStack.Screen name="AdminHome" component={AdminHomeScreen} options={{ title: t('nav.organizerTools') }} />
+      <AdminStack.Screen name="ManageParticipants" component={ManageParticipantsScreen} options={{ title: t('nav.manageParticipants') }} />
+      <AdminStack.Screen name="ManageProgram" component={ManageProgramScreen} options={{ title: t('nav.manageProgram') }} />
+      <AdminStack.Screen name="ManageSpeakers" component={ManageSpeakersScreen} options={{ title: t('nav.manageSpeakers') }} />
+      <AdminStack.Screen name="ManageOrgInfo" component={ManageOrgInfoScreen} options={{ title: t('nav.manageOrgInfo') }} />
+      <AdminStack.Screen name="ManageAnnouncements" component={ManageAnnouncementsScreen} options={{ title: t('nav.announcements') }} />
+      <AdminStack.Screen name="CheckInScanner" component={CheckInScannerScreen} options={{ title: t('nav.checkInScanner') }} />
     </AdminStack.Navigator>
   );
 }
 
 function ProgramStackNavigator() {
+  const { t } = useApp();
   return (
     <ProgramStack.Navigator screenOptions={stackScreenOptions}>
-      <ProgramStack.Screen name="Program" component={ProgramScreen} options={{ title: 'Program' }} />
-      <ProgramStack.Screen name="SessionDetail" component={SessionDetailScreen} options={{ title: 'Session' }} />
+      <ProgramStack.Screen name="Program" component={ProgramScreen} options={{ title: t('nav.program') }} />
+      <ProgramStack.Screen name="SessionDetail" component={SessionDetailScreen} options={{ title: t('nav.session') }} />
     </ProgramStack.Navigator>
   );
 }
 
 function SpeakersStackNavigator() {
+  const { t } = useApp();
   return (
     <SpeakersStack.Navigator screenOptions={stackScreenOptions}>
-      <SpeakersStack.Screen name="Speakers" component={SpeakersScreen} options={{ title: 'Speakers' }} />
-      <SpeakersStack.Screen name="SpeakerDetail" component={SpeakerDetailScreen} options={{ title: 'Speaker' }} />
+      <SpeakersStack.Screen name="Speakers" component={SpeakersScreen} options={{ title: t('nav.speakers') }} />
+      <SpeakersStack.Screen name="SpeakerDetail" component={SpeakerDetailScreen} options={{ title: t('nav.speaker') }} />
     </SpeakersStack.Navigator>
   );
 }
@@ -108,7 +113,7 @@ const ICONS = {
 };
 
 function MainTabs() {
-  const { hasAdminAccess } = useApp();
+  const { hasAdminAccess, t } = useApp();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -118,13 +123,13 @@ function MainTabs() {
         tabBarInactiveTintColor: '#9CA3AF',
       })}
     >
-      <Tab.Screen name="HomeTab" component={HomeStackNavigator} options={{ title: 'Home' }} />
-      <Tab.Screen name="ProgramTab" component={ProgramStackNavigator} options={{ title: 'Program' }} />
-      <Tab.Screen name="SpeakersTab" component={SpeakersStackNavigator} options={{ title: 'Speakers' }} />
-      <Tab.Screen name="InfoTab" component={InfoScreen} options={{ title: 'Info', headerShown: true }} />
-      <Tab.Screen name="AnnouncementsTab" component={AnnouncementsScreen} options={{ title: 'Updates', headerShown: true }} />
+      <Tab.Screen name="HomeTab" component={HomeStackNavigator} options={{ title: t('nav.home') }} />
+      <Tab.Screen name="ProgramTab" component={ProgramStackNavigator} options={{ title: t('nav.program') }} />
+      <Tab.Screen name="SpeakersTab" component={SpeakersStackNavigator} options={{ title: t('nav.speakers') }} />
+      <Tab.Screen name="InfoTab" component={InfoScreen} options={{ title: t('nav.info'), headerShown: true }} />
+      <Tab.Screen name="AnnouncementsTab" component={AnnouncementsScreen} options={{ title: t('nav.updates'), headerShown: true }} />
       {hasAdminAccess && (
-        <Tab.Screen name="AdminTab" component={AdminStackNavigator} options={{ title: 'Admin' }} />
+        <Tab.Screen name="AdminTab" component={AdminStackNavigator} options={{ title: t('nav.admin') }} />
       )}
     </Tab.Navigator>
   );
