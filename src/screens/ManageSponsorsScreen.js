@@ -1,44 +1,44 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
-import SessionEditorModal from '../components/SessionEditorModal';
+import SponsorEditorModal from '../components/SponsorEditorModal';
 import ConfirmModal from '../components/ConfirmModal';
 
-export default function ManageProgramScreen() {
-  const { hasAdminAccess, sessions, speakers, addSession, updateSession, deleteSession, t, localize } = useApp();
+export default function ManageSponsorsScreen() {
+  const { hasAdminAccess, sponsors, addSponsor, updateSponsor, deleteSponsor, t } = useApp();
   const [editorVisible, setEditorVisible] = useState(false);
-  const [editingSession, setEditingSession] = useState(null);
+  const [editingSponsor, setEditingSponsor] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   const openAdd = () => {
-    setEditingSession(null);
+    setEditingSponsor(null);
     setEditorVisible(true);
   };
 
-  const openEdit = (session) => {
-    setEditingSession(session);
+  const openEdit = (sponsor) => {
+    setEditingSponsor(sponsor);
     setEditorVisible(true);
   };
 
   const handleSave = (form) => {
-    if (editingSession) {
-      updateSession(editingSession.id, form);
+    if (editingSponsor) {
+      updateSponsor(editingSponsor.id, form);
     } else {
-      addSession(form);
+      addSponsor(form);
     }
     setEditorVisible(false);
   };
 
   const confirmDelete = () => {
-    if (deleteTarget) deleteSession(deleteTarget.id);
+    if (deleteTarget) deleteSponsor(deleteTarget.id);
     setDeleteTarget(null);
   };
 
   if (!hasAdminAccess) {
     return (
       <View style={styles.restricted}>
-        <Text style={styles.restrictedText}>{t('manageProgram.restricted')}</Text>
+        <Text style={styles.restrictedText}>{t('manageSponsors.restricted')}</Text>
       </View>
     );
   }
@@ -47,19 +47,22 @@ export default function ManageProgramScreen() {
     <View style={styles.container}>
       <FlatList
         contentContainerStyle={{ padding: 16 }}
-        data={sessions}
+        data={sponsors}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
-          <TouchableOpacity style={styles.addBtn} onPress={openAdd}>
-            <Text style={styles.addBtnText}>{t('manageProgram.addSession')}</Text>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity style={styles.addBtn} onPress={openAdd}>
+              <Text style={styles.addBtnText}>{t('manageSponsors.addSponsor')}</Text>
+            </TouchableOpacity>
+            <Text style={styles.note}>{t('manageSponsors.note')}</Text>
+          </View>
         }
         renderItem={({ item }) => (
           <View style={styles.row}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.rowTitle}>{localize(item.title)}</Text>
-              <Text style={styles.rowMeta}>{localize(item.day)} · {item.startTime}–{item.endTime} · {localize(item.room)}</Text>
+            <View style={[styles.swatch, { backgroundColor: item.color }]}>
+              {!!item.image && <Image source={{ uri: item.image }} style={styles.swatchImage} resizeMode="contain" />}
             </View>
+            <Text style={styles.rowTitle}>{item.name}</Text>
             <TouchableOpacity onPress={() => openEdit(item)} style={styles.iconBtn}>
               <Ionicons name="create-outline" size={20} color="#4D92CF" />
             </TouchableOpacity>
@@ -70,19 +73,18 @@ export default function ManageProgramScreen() {
         )}
       />
 
-      <SessionEditorModal
+      <SponsorEditorModal
         visible={editorVisible}
-        initialSession={editingSession}
-        speakers={speakers}
+        initialSponsor={editingSponsor}
         onCancel={() => setEditorVisible(false)}
         onSave={handleSave}
       />
 
       <ConfirmModal
         visible={!!deleteTarget}
-        title={t('manageProgram.deleteTitle')}
-        body={deleteTarget ? t('manageProgram.deleteBody', { title: localize(deleteTarget.title) }) : ''}
-        confirmLabel={t('manageProgram.deleteLabel')}
+        title={t('manageSponsors.deleteTitle')}
+        body={deleteTarget ? t('manageSponsors.deleteBody', { name: deleteTarget.name }) : ''}
+        confirmLabel={t('manageSponsors.deleteLabel')}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={confirmDelete}
       />
@@ -94,10 +96,12 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F3F4F6' },
   restricted: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   restrictedText: { fontSize: 14, color: '#DC2626', textAlign: 'center' },
-  addBtn: { backgroundColor: '#4D92CF', borderRadius: 10, padding: 12, marginBottom: 14, alignItems: 'center' },
+  addBtn: { backgroundColor: '#4D92CF', borderRadius: 10, padding: 12, marginBottom: 8, alignItems: 'center' },
   addBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
+  note: { fontSize: 12, color: '#6B7280', marginBottom: 14, lineHeight: 17 },
   row: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 12, padding: 12, marginBottom: 8 },
-  rowTitle: { fontSize: 14, fontWeight: '600', color: '#1F2937' },
-  rowMeta: { fontSize: 12, color: '#6B7280', marginTop: 2 },
+  swatch: { width: 28, height: 28, borderRadius: 8, marginRight: 12, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  swatchImage: { width: '100%', height: '100%' },
+  rowTitle: { flex: 1, fontSize: 14, fontWeight: '600', color: '#1F2937' },
   iconBtn: { padding: 6, marginLeft: 4 },
 });

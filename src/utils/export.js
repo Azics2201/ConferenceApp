@@ -27,8 +27,11 @@ function escapeCsvValue(value) {
 }
 
 // Deliberately excludes the password field — never put credentials in an export.
-export function buildParticipantsCSV(accounts, sessions) {
-  const sessionTitleById = Object.fromEntries(sessions.map((s) => [s.id, s.title]));
+// `localize` resolves a bilingual { en, cs } content field to a plain string
+// for a session title — passed in rather than imported, since this is a
+// plain utility function with no access to the language context.
+export function buildParticipantsCSV(accounts, sessions, localize = (v) => v) {
+  const sessionTitleById = Object.fromEntries(sessions.map((s) => [s.id, localize(s.title)]));
   const rows = accounts.map((a) => [
     a.firstName,
     a.lastName,
@@ -51,8 +54,8 @@ export function buildParticipantsCSV(accounts, sessions) {
 // Fully local — works with no network and no backend. On web this triggers a
 // browser download; on a native device it writes a temp file and opens the
 // share sheet so the organizer can save or send it (e.g. via email/AirDrop).
-export async function exportParticipantsLocally(accounts, sessions, filename = 'participants.csv', dialogTitle = 'Export participants') {
-  const csv = buildParticipantsCSV(accounts, sessions);
+export async function exportParticipantsLocally(accounts, sessions, filename = 'participants.csv', dialogTitle = 'Export participants', localize = (v) => v) {
+  const csv = buildParticipantsCSV(accounts, sessions, localize);
 
   if (Platform.OS === 'web') {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

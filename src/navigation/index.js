@@ -19,6 +19,9 @@ import ManageProgramScreen from '../screens/ManageProgramScreen';
 import ManageSpeakersScreen from '../screens/ManageSpeakersScreen';
 import ManageOrgInfoScreen from '../screens/ManageOrgInfoScreen';
 import ManageAnnouncementsScreen from '../screens/ManageAnnouncementsScreen';
+import ManageEventScreen from '../screens/ManageEventScreen';
+import ManageMaterialsScreen from '../screens/ManageMaterialsScreen';
+import ManageSponsorsScreen from '../screens/ManageSponsorsScreen';
 import CheckInScannerScreen from '../screens/CheckInScannerScreen';
 import ProgramScreen from '../screens/ProgramScreen';
 import SessionDetailScreen from '../screens/SessionDetailScreen';
@@ -59,10 +62,10 @@ function AuthStackNavigator() {
 }
 
 function HomeStackNavigator() {
-  const { t } = useApp();
+  const { t, event } = useApp();
   return (
     <HomeStack.Navigator screenOptions={stackScreenOptions}>
-      <HomeStack.Screen name="Home" component={HomeScreen} options={{ title: t('nav.homeTitle') }} />
+      <HomeStack.Screen name="Home" component={HomeScreen} options={{ title: event.name }} />
       <HomeStack.Screen name="Badge" component={BadgeScreen} options={{ title: t('nav.myBadge') }} />
     </HomeStack.Navigator>
   );
@@ -73,10 +76,13 @@ function AdminStackNavigator() {
   return (
     <AdminStack.Navigator screenOptions={stackScreenOptions}>
       <AdminStack.Screen name="AdminHome" component={AdminHomeScreen} options={{ title: t('nav.organizerTools') }} />
+      <AdminStack.Screen name="ManageEvent" component={ManageEventScreen} options={{ title: t('nav.manageEvent') }} />
       <AdminStack.Screen name="ManageParticipants" component={ManageParticipantsScreen} options={{ title: t('nav.manageParticipants') }} />
       <AdminStack.Screen name="ManageProgram" component={ManageProgramScreen} options={{ title: t('nav.manageProgram') }} />
       <AdminStack.Screen name="ManageSpeakers" component={ManageSpeakersScreen} options={{ title: t('nav.manageSpeakers') }} />
       <AdminStack.Screen name="ManageOrgInfo" component={ManageOrgInfoScreen} options={{ title: t('nav.manageOrgInfo') }} />
+      <AdminStack.Screen name="ManageMaterials" component={ManageMaterialsScreen} options={{ title: t('nav.manageMaterials') }} />
+      <AdminStack.Screen name="ManageSponsors" component={ManageSponsorsScreen} options={{ title: t('nav.manageSponsors') }} />
       <AdminStack.Screen name="ManageAnnouncements" component={ManageAnnouncementsScreen} options={{ title: t('nav.announcements') }} />
       <AdminStack.Screen name="CheckInScanner" component={CheckInScannerScreen} options={{ title: t('nav.checkInScanner') }} />
     </AdminStack.Navigator>

@@ -4,37 +4,31 @@ import BilingualField from './BilingualField';
 import { useApp } from '../context/AppContext';
 import { toBilingual, isBilingualFilled } from '../utils/bilingual';
 
-const emptyForm = { name: '', title: { en: '', cs: '' }, bio: { en: '', cs: '' }, photo: '' };
+const emptyForm = { title: { en: '', cs: '' }, url: '' };
 
-export default function SpeakerEditorModal({ visible, initialSpeaker, onCancel, onSave }) {
+export default function MaterialEditorModal({ visible, initialMaterial, onCancel, onSave }) {
   const { t } = useApp();
   const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
     if (visible) {
       setForm(
-        initialSpeaker
-          ? {
-              ...emptyForm,
-              ...initialSpeaker,
-              title: toBilingual(initialSpeaker.title),
-              bio: toBilingual(initialSpeaker.bio),
-            }
+        initialMaterial
+          ? { ...emptyForm, ...initialMaterial, title: toBilingual(initialMaterial.title) }
           : emptyForm
       );
     }
-  }, [visible, initialSpeaker]);
+  }, [visible, initialMaterial]);
 
   const setField = (field) => (value) => setForm((f) => ({ ...f, [field]: value }));
   const setBilingual = (field, lang) => (value) =>
     setForm((f) => ({ ...f, [field]: { ...f[field], [lang]: value } }));
 
   const handleSave = () => {
-    if (!form.name.trim() || !isBilingualFilled(form.title) || !isBilingualFilled(form.bio)) {
+    if (!isBilingualFilled(form.title) || !form.url.trim()) {
       return Alert.alert(t('common.bothLanguagesRequired'));
     }
-    const photo = form.photo.trim() || 'https://i.pravatar.cc/150';
-    onSave({ ...form, photo });
+    onSave(form);
   };
 
   return (
@@ -42,38 +36,33 @@ export default function SpeakerEditorModal({ visible, initialSpeaker, onCancel, 
       <View style={styles.overlay}>
         <View style={styles.card}>
           <ScrollView>
-            <Text style={styles.title}>{initialSpeaker ? t('speakerEditor.editTitle') : t('speakerEditor.addTitle')}</Text>
-
-            <Text style={styles.label}>{t('speakerEditor.name')}</Text>
-            <TextInput style={styles.input} value={form.name} onChangeText={setField('name')} placeholder={t('speakerEditor.namePlaceholder')} />
+            <Text style={styles.title}>{initialMaterial ? t('materialEditor.editTitle') : t('materialEditor.addTitle')}</Text>
 
             <BilingualField
-              label={t('speakerEditor.titleLabel')}
+              label={t('materialEditor.title')}
               valueEn={form.title.en}
               valueCs={form.title.cs}
               onChangeEn={setBilingual('title', 'en')}
               onChangeCs={setBilingual('title', 'cs')}
-              placeholder={t('speakerEditor.titlePlaceholder')}
+              placeholder={t('materialEditor.titlePlaceholder')}
             />
 
-            <BilingualField
-              label={t('speakerEditor.bio')}
-              valueEn={form.bio.en}
-              valueCs={form.bio.cs}
-              onChangeEn={setBilingual('bio', 'en')}
-              onChangeCs={setBilingual('bio', 'cs')}
-              multiline
+            <Text style={styles.label}>{t('materialEditor.url')}</Text>
+            <TextInput
+              style={styles.input}
+              value={form.url}
+              onChangeText={setField('url')}
+              placeholder="https://..."
+              autoCapitalize="none"
+              keyboardType="url"
             />
-
-            <Text style={styles.label}>{t('speakerEditor.photo')}</Text>
-            <TextInput style={styles.input} value={form.photo} onChangeText={setField('photo')} placeholder="https://..." autoCapitalize="none" />
 
             <View style={styles.actions}>
               <TouchableOpacity onPress={onCancel}>
-                <Text style={styles.cancel}>{t('speakerEditor.cancel')}</Text>
+                <Text style={styles.cancel}>{t('materialEditor.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleSave}>
-                <Text style={styles.save}>{t('speakerEditor.save')}</Text>
+                <Text style={styles.save}>{t('materialEditor.save')}</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

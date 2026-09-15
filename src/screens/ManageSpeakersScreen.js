@@ -6,7 +6,7 @@ import SpeakerEditorModal from '../components/SpeakerEditorModal';
 import ConfirmModal from '../components/ConfirmModal';
 
 export default function ManageSpeakersScreen() {
-  const { hasAdminAccess, speakers, addSpeaker, updateSpeaker, deleteSpeaker, t } = useApp();
+  const { hasAdminAccess, speakers, addSpeaker, updateSpeaker, deleteSpeaker, t, localize } = useApp();
   const [editorVisible, setEditorVisible] = useState(false);
   const [editingSpeaker, setEditingSpeaker] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -59,7 +59,7 @@ export default function ManageSpeakersScreen() {
             <Image source={{ uri: item.photo }} style={styles.avatar} />
             <View style={{ flex: 1 }}>
               <Text style={styles.rowTitle}>{item.name}</Text>
-              <Text style={styles.rowMeta}>{item.title}</Text>
+              <Text style={styles.rowMeta}>{localize(item.title)}</Text>
             </View>
             <TouchableOpacity onPress={() => openEdit(item)} style={styles.iconBtn}>
               <Ionicons name="create-outline" size={20} color="#4D92CF" />

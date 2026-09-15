@@ -1,36 +1,40 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, ScrollView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, ScrollView, Alert } from 'react-native';
 import { useApp } from '../context/AppContext';
 import AnnouncementCard, { timeAgo } from '../components/AnnouncementCard';
 import ConfirmModal from '../components/ConfirmModal';
+import BilingualField from '../components/BilingualField';
+import { isBilingualFilled } from '../utils/bilingual';
 
 const ROLES = ['Attendee', 'Speaker', 'Press', 'Organizer'];
 
-function describeAudience(audience, sessions, t) {
+function describeAudience(audience, sessions, t, localize) {
   if (!audience || audience.type === 'all') return t('announcements.allParticipants');
   if (audience.type === 'role') return t('announcements.roleOnly', { role: t(`roles.${audience.role}`) });
   if (audience.type === 'session') {
     const s = sessions.find((x) => x.id === audience.sessionId);
-    return s ? t('announcements.attendeesOf', { title: s.title }) : t('announcements.attendeesOfSpecificSession');
+    return s ? t('announcements.attendeesOf', { title: localize(s.title) }) : t('announcements.attendeesOfSpecificSession');
   }
   return t('announcements.allParticipants');
 }
 
 export default function ManageAnnouncementsScreen() {
-  const { hasAdminAccess, announcements, addAnnouncement, deleteAnnouncement, sessions, t } = useApp();
+  const { hasAdminAccess, announcements, addAnnouncement, deleteAnnouncement, sessions, t, localize } = useApp();
   const AUDIENCE_TYPES = [
     { key: 'all', label: t('manageAnnouncements.audienceAll') },
     { key: 'session', label: t('manageAnnouncements.audienceBySession') },
     { key: 'role', label: t('manageAnnouncements.audienceByRole') },
   ];
   const [modalVisible, setModalVisible] = useState(false);
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
+  const [title, setTitle] = useState({ en: '', cs: '' });
+  const [body, setBody] = useState({ en: '', cs: '' });
   const [audienceType, setAudienceType] = useState('all');
   const [audienceRole, setAudienceRole] = useState(ROLES[0]);
   const [audienceSessionId, setAudienceSessionId] = useState(sessions[0]?.id);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+
+  const setBilingual = (setter) => (lang) => (value) => setter((f) => ({ ...f, [lang]: value }));
 
   const confirmDelete = () => {
     if (deleteTarget) deleteAnnouncement(deleteTarget.id);
@@ -40,16 +44,22 @@ export default function ManageAnnouncementsScreen() {
 
   const onSend = async () => {
     if (!hasAdminAccess) return;
-    if (!title.trim() || !body.trim()) return;
+    if (!isBilingualFilled(title) || !isBilingualFilled(body)) {
+      return Alert.alert(t('common.bothLanguagesRequired'));
+    }
     const audience =
       audienceType === 'role'
         ? { type: 'role', role: audienceRole }
         : audienceType === 'session'
         ? { type: 'session', sessionId: audienceSessionId }
         : { type: 'all' };
-    await addAnnouncement(title.trim(), body.trim(), audience);
-    setTitle('');
-    setBody('');
+    await addAnnouncement(
+      { en: title.en.trim(), cs: title.cs.trim() },
+      { en: body.en.trim(), cs: body.cs.trim() },
+      audience
+    );
+    setTitle({ en: '', cs: '' });
+    setBody({ en: '', cs: '' });
     setAudienceType('all');
     setModalVisible(false);
   };
@@ -75,7 +85,7 @@ export default function ManageAnnouncementsScreen() {
         renderItem={({ item }) => (
           <AnnouncementCard
             announcement={item}
-            audienceLabel={describeAudience(item.audience, sessions, t)}
+            audienceLabel={describeAudience(item.audience, sessions, t, localize)}
             onPress={() => setSelectedAnnouncement(item)}
           />
         )}
@@ -94,12 +104,12 @@ export default function ManageAnnouncementsScreen() {
           <View style={styles.modalCard}>
             {selectedAnnouncement && (
               <ScrollView>
-                <Text style={styles.detailTitle}>{selectedAnnouncement.title}</Text>
+                <Text style={styles.detailTitle}>{localize(selectedAnnouncement.title)}</Text>
                 <Text style={styles.detailMeta}>
                   {timeAgo(selectedAnnouncement.timestamp, t)} · {new Date(selectedAnnouncement.timestamp).toLocaleString()}
                 </Text>
-                <Text style={styles.detailAudience}>{t('announcements.to', { audience: describeAudience(selectedAnnouncement.audience, sessions, t) })}</Text>
-                <Text style={styles.detailBody}>{selectedAnnouncement.body}</Text>
+                <Text style={styles.detailAudience}>{t('announcements.to', { audience: describeAudience(selectedAnnouncement.audience, sessions, t, localize) })}</Text>
+                <Text style={styles.detailBody}>{localize(selectedAnnouncement.body)}</Text>
               </ScrollView>
             )}
             <View style={styles.detailActions}>
@@ -120,7 +130,7 @@ export default function ManageAnnouncementsScreen() {
       <ConfirmModal
         visible={!!deleteTarget}
         title={t('manageAnnouncements.deleteTitle')}
-        body={deleteTarget ? t('manageAnnouncements.deleteBody', { title: deleteTarget.title }) : ''}
+        body={deleteTarget ? t('manageAnnouncements.deleteBody', { title: localize(deleteTarget.title) }) : ''}
         confirmLabel={t('manageAnnouncements.deleteLabel')}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={confirmDelete}
@@ -131,12 +141,19 @@ export default function ManageAnnouncementsScreen() {
           <View style={styles.modalCard}>
             <ScrollView>
               <Text style={styles.modalTitle}>{t('manageAnnouncements.sendTitle')}</Text>
-              <TextInput style={styles.input} placeholder={t('manageAnnouncements.titlePlaceholder')} value={title} onChangeText={setTitle} />
-              <TextInput
-                style={[styles.input, { height: 80 }]}
+              <BilingualField
+                valueEn={title.en}
+                valueCs={title.cs}
+                onChangeEn={setBilingual(setTitle)('en')}
+                onChangeCs={setBilingual(setTitle)('cs')}
+                placeholder={t('manageAnnouncements.titlePlaceholder')}
+              />
+              <BilingualField
+                valueEn={body.en}
+                valueCs={body.cs}
+                onChangeEn={setBilingual(setBody)('en')}
+                onChangeCs={setBilingual(setBody)('cs')}
                 placeholder={t('manageAnnouncements.messagePlaceholder')}
-                value={body}
-                onChangeText={setBody}
                 multiline
               />
 
@@ -175,7 +192,7 @@ export default function ManageAnnouncementsScreen() {
                       style={[styles.sessionOption, audienceSessionId === s.id && styles.sessionOptionActive]}
                       onPress={() => setAudienceSessionId(s.id)}
                     >
-                      <Text style={styles.sessionOptionText}>{s.title}</Text>
+                      <Text style={styles.sessionOptionText}>{localize(s.title)}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>

@@ -1,19 +1,46 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView, Alert } from 'react-native';
 import CheckboxRow from './CheckboxRow';
+import BilingualField from './BilingualField';
 import { useApp } from '../context/AppContext';
+import { toBilingual, isBilingualFilled } from '../utils/bilingual';
 
-const emptyForm = { title: '', day: '', startTime: '', endTime: '', room: '', track: '', description: '', speakerIds: [] };
+const emptyForm = {
+  title: { en: '', cs: '' },
+  day: { en: '', cs: '' },
+  startTime: '',
+  endTime: '',
+  room: { en: '', cs: '' },
+  track: { en: '', cs: '' },
+  description: { en: '', cs: '' },
+  speakerIds: [],
+};
 
 export default function SessionEditorModal({ visible, initialSession, speakers, onCancel, onSave }) {
   const { t } = useApp();
   const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
-    if (visible) setForm(initialSession ? { ...emptyForm, ...initialSession } : emptyForm);
+    if (visible) {
+      setForm(
+        initialSession
+          ? {
+              ...emptyForm,
+              ...initialSession,
+              title: toBilingual(initialSession.title),
+              day: toBilingual(initialSession.day),
+              room: toBilingual(initialSession.room),
+              track: toBilingual(initialSession.track),
+              description: toBilingual(initialSession.description),
+            }
+          : emptyForm
+      );
+    }
   }, [visible, initialSession]);
 
   const setField = (field) => (value) => setForm((f) => ({ ...f, [field]: value }));
+  const setBilingual = (field, lang) => (value) =>
+    setForm((f) => ({ ...f, [field]: { ...f[field], [lang]: value } }));
 
   const toggleSpeaker = (id) => {
     setForm((f) => ({
@@ -23,7 +50,16 @@ export default function SessionEditorModal({ visible, initialSession, speakers, 
   };
 
   const handleSave = () => {
-    if (!form.title.trim() || !form.day.trim() || !form.startTime.trim()) return;
+    if (
+      !isBilingualFilled(form.title) ||
+      !isBilingualFilled(form.day) ||
+      !isBilingualFilled(form.room) ||
+      !isBilingualFilled(form.track) ||
+      !isBilingualFilled(form.description) ||
+      !form.startTime.trim()
+    ) {
+      return Alert.alert(t('common.bothLanguagesRequired'));
+    }
     onSave(form);
   };
 
@@ -34,11 +70,23 @@ export default function SessionEditorModal({ visible, initialSession, speakers, 
           <ScrollView>
             <Text style={styles.title}>{initialSession ? t('sessionEditor.editTitle') : t('sessionEditor.addTitle')}</Text>
 
-            <Text style={styles.label}>{t('sessionEditor.title')}</Text>
-            <TextInput style={styles.input} value={form.title} onChangeText={setField('title')} placeholder={t('sessionEditor.titlePlaceholder')} />
+            <BilingualField
+              label={t('sessionEditor.title')}
+              valueEn={form.title.en}
+              valueCs={form.title.cs}
+              onChangeEn={setBilingual('title', 'en')}
+              onChangeCs={setBilingual('title', 'cs')}
+              placeholder={t('sessionEditor.titlePlaceholder')}
+            />
 
-            <Text style={styles.label}>{t('sessionEditor.day')}</Text>
-            <TextInput style={styles.input} value={form.day} onChangeText={setField('day')} placeholder={t('sessionEditor.dayPlaceholder')} />
+            <BilingualField
+              label={t('sessionEditor.day')}
+              valueEn={form.day.en}
+              valueCs={form.day.cs}
+              onChangeEn={setBilingual('day', 'en')}
+              onChangeCs={setBilingual('day', 'cs')}
+              placeholder={t('sessionEditor.dayPlaceholder')}
+            />
 
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 1, marginRight: 8 }}>
@@ -51,17 +99,30 @@ export default function SessionEditorModal({ visible, initialSession, speakers, 
               </View>
             </View>
 
-            <Text style={styles.label}>{t('sessionEditor.room')}</Text>
-            <TextInput style={styles.input} value={form.room} onChangeText={setField('room')} placeholder={t('sessionEditor.roomPlaceholder')} />
+            <BilingualField
+              label={t('sessionEditor.room')}
+              valueEn={form.room.en}
+              valueCs={form.room.cs}
+              onChangeEn={setBilingual('room', 'en')}
+              onChangeCs={setBilingual('room', 'cs')}
+              placeholder={t('sessionEditor.roomPlaceholder')}
+            />
 
-            <Text style={styles.label}>{t('sessionEditor.track')}</Text>
-            <TextInput style={styles.input} value={form.track} onChangeText={setField('track')} placeholder={t('sessionEditor.trackPlaceholder')} />
+            <BilingualField
+              label={t('sessionEditor.track')}
+              valueEn={form.track.en}
+              valueCs={form.track.cs}
+              onChangeEn={setBilingual('track', 'en')}
+              onChangeCs={setBilingual('track', 'cs')}
+              placeholder={t('sessionEditor.trackPlaceholder')}
+            />
 
-            <Text style={styles.label}>{t('sessionEditor.description')}</Text>
-            <TextInput
-              style={[styles.input, styles.multiline]}
-              value={form.description}
-              onChangeText={setField('description')}
+            <BilingualField
+              label={t('sessionEditor.description')}
+              valueEn={form.description.en}
+              valueCs={form.description.cs}
+              onChangeEn={setBilingual('description', 'en')}
+              onChangeCs={setBilingual('description', 'cs')}
               multiline
             />
 
@@ -96,7 +157,6 @@ const styles = StyleSheet.create({
   title: { fontSize: 16, fontWeight: '800', marginBottom: 12 },
   label: { fontSize: 13, fontWeight: '600', color: '#374151', marginTop: 10, marginBottom: 6 },
   input: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, fontSize: 14 },
-  multiline: { height: 70, textAlignVertical: 'top' },
   actions: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20, paddingBottom: 10 },
   cancel: { color: '#6B7280', fontWeight: '600', marginRight: 20 },
   save: { color: '#4D92CF', fontWeight: '700' },

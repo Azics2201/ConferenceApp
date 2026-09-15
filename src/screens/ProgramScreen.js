@@ -4,12 +4,12 @@ import SessionCard from '../components/SessionCard';
 import { useApp } from '../context/AppContext';
 
 export default function ProgramScreen({ navigation }) {
-  const { sessions, favorites, toggleFavorite } = useApp();
+  const { sessions, favorites, toggleFavorite, localize, language } = useApp();
 
   const sections = useMemo(() => {
-    const days = [...new Set(sessions.map((s) => s.day))];
-    return days.map((day) => ({ title: day, data: sessions.filter((s) => s.day === day) }));
-  }, [sessions]);
+    const days = [...new Set(sessions.map((s) => localize(s.day)))];
+    return days.map((day) => ({ title: day, data: sessions.filter((s) => localize(s.day) === day) }));
+  }, [sessions, language]);
 
   return (
     <SectionList

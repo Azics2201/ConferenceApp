@@ -10,13 +10,12 @@ import {
   Modal,
 } from 'react-native';
 import { useApp } from '../context/AppContext';
-import { TERMS_TEXT } from '../data/terms';
 import CheckboxRow from '../components/CheckboxRow';
 
 const ROLES = ['Attendee', 'Press'];
 
 export default function RegisterScreen({ navigation }) {
-  const { registerAccount, sessions, t } = useApp();
+  const { registerAccount, sessions, t, localize, language, termsText } = useApp();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -34,9 +33,9 @@ export default function RegisterScreen({ navigation }) {
   const [termsModalVisible, setTermsModalVisible] = useState(false);
 
   const sessionsByDay = useMemo(() => {
-    const days = [...new Set(sessions.map((s) => s.day))];
-    return days.map((day) => ({ day, items: sessions.filter((s) => s.day === day) }));
-  }, [sessions]);
+    const days = [...new Set(sessions.map((s) => localize(s.day)))];
+    return days.map((day) => ({ day, items: sessions.filter((s) => localize(s.day) === day) }));
+  }, [sessions, language]);
 
   const isValidEmail = /\S+@\S+\.\S+/.test(email);
 
@@ -144,7 +143,7 @@ export default function RegisterScreen({ navigation }) {
           {group.items.map((s) => (
             <CheckboxRow
               key={s.id}
-              label={`${s.startTime} · ${s.title}`}
+              label={`${s.startTime} · ${localize(s.title)}`}
               checked={sessionIds.includes(s.id)}
               onPress={() => toggleSession(s.id)}
             />
@@ -192,7 +191,7 @@ export default function RegisterScreen({ navigation }) {
       <Modal visible={termsModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
           <ScrollView contentContainerStyle={{ padding: 20 }}>
-            <Text style={styles.termsText}>{TERMS_TEXT}</Text>
+            <Text style={styles.termsText}>{localize(termsText)}</Text>
           </ScrollView>
           <TouchableOpacity style={styles.closeBtn} onPress={() => setTermsModalVisible(false)}>
             <Text style={styles.closeBtnText}>{t('common.close')}</Text>

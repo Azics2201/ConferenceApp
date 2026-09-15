@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext';
 
 export default function SessionDetailScreen({ route }) {
   const { sessionId } = route.params;
-  const { sessions, speakers, favorites, toggleFavorite, currentUser, t } = useApp();
+  const { sessions, speakers, favorites, toggleFavorite, currentUser, t, localize } = useApp();
   const session = sessions.find((s) => s.id === sessionId);
 
   if (!session) {
@@ -23,24 +23,24 @@ export default function SessionDetailScreen({ route }) {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>{session.title}</Text>
+        <Text style={styles.title}>{localize(session.title)}</Text>
         <TouchableOpacity onPress={() => toggleFavorite(sessionId)}>
           <Ionicons name={isFavorite ? 'star' : 'star-outline'} size={26} color={isFavorite ? '#E8A93A' : '#9AA0A6'} />
         </TouchableOpacity>
       </View>
-      <Text style={styles.meta}>{session.day} · {session.startTime}–{session.endTime}</Text>
-      <Text style={styles.meta}>{session.room} · {session.track}</Text>
+      <Text style={styles.meta}>{localize(session.day)} · {session.startTime}–{session.endTime}</Text>
+      <Text style={styles.meta}>{localize(session.room)} · {localize(session.track)}</Text>
       {isSignedUp && <Text style={styles.signedUp}>{t('sessionDetail.signedUp')}</Text>}
       {session.updatedAt && <Text style={styles.updated}>{t('sessionDetail.updated')}</Text>}
 
       <Text style={styles.sectionLabel}>{t('sessionDetail.about')}</Text>
-      <Text style={styles.description}>{session.description}</Text>
+      <Text style={styles.description}>{localize(session.description)}</Text>
 
       <Text style={styles.sectionLabel}>{t('sessionDetail.speakers')}</Text>
       {sessionSpeakers.map((sp) => (
         <View key={sp.id} style={styles.speakerRow}>
           <Text style={styles.speakerName}>{sp.name}</Text>
-          <Text style={styles.speakerTitle}>{sp.title}</Text>
+          <Text style={styles.speakerTitle}>{localize(sp.title)}</Text>
         </View>
       ))}
     </ScrollView>

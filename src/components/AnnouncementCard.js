@@ -16,9 +16,11 @@ export function timeAgo(iso, t) {
 const TRUNCATE_LINES = 3;
 
 export default function AnnouncementCard({ announcement, audienceLabel, onPress }) {
-  const { t } = useApp();
+  const { t, localize } = useApp();
   const isHigh = announcement.priority === 'high';
-  const isLong = announcement.body.length > 160 || announcement.body.split('\n').length > TRUNCATE_LINES;
+  const title = localize(announcement.title);
+  const body = localize(announcement.body);
+  const isLong = body.length > 160 || body.split('\n').length > TRUNCATE_LINES;
 
   return (
     <TouchableOpacity
@@ -27,11 +29,11 @@ export default function AnnouncementCard({ announcement, audienceLabel, onPress 
       activeOpacity={onPress ? 0.7 : 1}
     >
       <View style={styles.headerRow}>
-        <Text style={styles.title}>{announcement.title}</Text>
+        <Text style={styles.title}>{title}</Text>
         <Text style={styles.time}>{timeAgo(announcement.timestamp, t)}</Text>
       </View>
       <Text style={styles.body} numberOfLines={TRUNCATE_LINES}>
-        {announcement.body}
+        {body}
       </Text>
       {isLong && onPress && <Text style={styles.readMore}>{t('common.readMore')}</Text>}
       {!!audienceLabel && <Text style={styles.audience}>{t('announcements.to', { audience: audienceLabel })}</Text>}

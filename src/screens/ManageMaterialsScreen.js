@@ -2,43 +2,43 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
-import SessionEditorModal from '../components/SessionEditorModal';
+import MaterialEditorModal from '../components/MaterialEditorModal';
 import ConfirmModal from '../components/ConfirmModal';
 
-export default function ManageProgramScreen() {
-  const { hasAdminAccess, sessions, speakers, addSession, updateSession, deleteSession, t, localize } = useApp();
+export default function ManageMaterialsScreen() {
+  const { hasAdminAccess, materials, addMaterial, updateMaterial, deleteMaterial, t, localize } = useApp();
   const [editorVisible, setEditorVisible] = useState(false);
-  const [editingSession, setEditingSession] = useState(null);
+  const [editingMaterial, setEditingMaterial] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   const openAdd = () => {
-    setEditingSession(null);
+    setEditingMaterial(null);
     setEditorVisible(true);
   };
 
-  const openEdit = (session) => {
-    setEditingSession(session);
+  const openEdit = (material) => {
+    setEditingMaterial(material);
     setEditorVisible(true);
   };
 
   const handleSave = (form) => {
-    if (editingSession) {
-      updateSession(editingSession.id, form);
+    if (editingMaterial) {
+      updateMaterial(editingMaterial.id, form);
     } else {
-      addSession(form);
+      addMaterial(form);
     }
     setEditorVisible(false);
   };
 
   const confirmDelete = () => {
-    if (deleteTarget) deleteSession(deleteTarget.id);
+    if (deleteTarget) deleteMaterial(deleteTarget.id);
     setDeleteTarget(null);
   };
 
   if (!hasAdminAccess) {
     return (
       <View style={styles.restricted}>
-        <Text style={styles.restrictedText}>{t('manageProgram.restricted')}</Text>
+        <Text style={styles.restrictedText}>{t('manageMaterials.restricted')}</Text>
       </View>
     );
   }
@@ -47,18 +47,19 @@ export default function ManageProgramScreen() {
     <View style={styles.container}>
       <FlatList
         contentContainerStyle={{ padding: 16 }}
-        data={sessions}
+        data={materials}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
           <TouchableOpacity style={styles.addBtn} onPress={openAdd}>
-            <Text style={styles.addBtnText}>{t('manageProgram.addSession')}</Text>
+            <Text style={styles.addBtnText}>{t('manageMaterials.addMaterial')}</Text>
           </TouchableOpacity>
         }
         renderItem={({ item }) => (
           <View style={styles.row}>
-            <View style={{ flex: 1 }}>
+            <Ionicons name="document-text-outline" size={20} color="#4D92CF" />
+            <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={styles.rowTitle}>{localize(item.title)}</Text>
-              <Text style={styles.rowMeta}>{localize(item.day)} · {item.startTime}–{item.endTime} · {localize(item.room)}</Text>
+              <Text style={styles.rowMeta} numberOfLines={1}>{item.url}</Text>
             </View>
             <TouchableOpacity onPress={() => openEdit(item)} style={styles.iconBtn}>
               <Ionicons name="create-outline" size={20} color="#4D92CF" />
@@ -70,19 +71,18 @@ export default function ManageProgramScreen() {
         )}
       />
 
-      <SessionEditorModal
+      <MaterialEditorModal
         visible={editorVisible}
-        initialSession={editingSession}
-        speakers={speakers}
+        initialMaterial={editingMaterial}
         onCancel={() => setEditorVisible(false)}
         onSave={handleSave}
       />
 
       <ConfirmModal
         visible={!!deleteTarget}
-        title={t('manageProgram.deleteTitle')}
-        body={deleteTarget ? t('manageProgram.deleteBody', { title: localize(deleteTarget.title) }) : ''}
-        confirmLabel={t('manageProgram.deleteLabel')}
+        title={t('manageMaterials.deleteTitle')}
+        body={deleteTarget ? t('manageMaterials.deleteBody', { title: localize(deleteTarget.title) }) : ''}
+        confirmLabel={t('manageMaterials.deleteLabel')}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={confirmDelete}
       />

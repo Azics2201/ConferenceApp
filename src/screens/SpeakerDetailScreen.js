@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 
 export default function SpeakerDetailScreen({ route }) {
   const { speakerId } = route.params;
-  const { speakers, sessions, t } = useApp();
+  const { speakers, sessions, t, localize } = useApp();
   const speaker = speakers.find((s) => s.id === speakerId);
 
   if (!speaker) {
@@ -22,15 +22,15 @@ export default function SpeakerDetailScreen({ route }) {
       <View style={styles.header}>
         <Image source={{ uri: speaker.photo }} style={styles.avatar} />
         <Text style={styles.name}>{speaker.name}</Text>
-        <Text style={styles.title}>{speaker.title}</Text>
+        <Text style={styles.title}>{localize(speaker.title)}</Text>
       </View>
-      <Text style={styles.bio}>{speaker.bio}</Text>
+      <Text style={styles.bio}>{localize(speaker.bio)}</Text>
 
       <Text style={styles.sectionLabel}>{t('speakerDetail.sessions')}</Text>
       {speakerSessions.map((s) => (
         <View key={s.id} style={styles.sessionRow}>
-          <Text style={styles.sessionTitle}>{s.title}</Text>
-          <Text style={styles.sessionMeta}>{s.day} · {s.startTime}–{s.endTime} · {s.room}</Text>
+          <Text style={styles.sessionTitle}>{localize(s.title)}</Text>
+          <Text style={styles.sessionMeta}>{localize(s.day)} · {s.startTime}–{s.endTime} · {localize(s.room)}</Text>
         </View>
       ))}
     </ScrollView>

@@ -2,10 +2,9 @@ import React from 'react';
 import { Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Image, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
-import { MATERIALS } from '../data/materials';
 
 export default function InfoScreen() {
-  const { orgInfo, t } = useApp();
+  const { orgInfo, materials, t, localize } = useApp();
   const { venue, directions, parking, transportation, accommodation, organizerContact, catering, instructions, additionalInfo } = orgInfo;
 
   const staticMapUrl = `https://staticmap.openstreetmap.de/staticmap.php?center=${venue.latitude},${venue.longitude}&zoom=15&size=600x300&markers=${venue.latitude},${venue.longitude},red-pushpin`;
@@ -17,9 +16,9 @@ export default function InfoScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
       <Section title={t('info.venue')}>
-        <Text style={styles.venueName}>{venue.name}</Text>
+        <Text style={styles.venueName}>{localize(venue.name)}</Text>
         <Text style={styles.body}>{venue.address}</Text>
-        <Text style={[styles.body, { marginTop: 6 }]}>{venue.description}</Text>
+        <Text style={[styles.body, { marginTop: 6 }]}>{localize(venue.description)}</Text>
         <Image source={{ uri: staticMapUrl }} style={styles.map} resizeMode="cover" />
         <TouchableOpacity style={styles.linkRow} onPress={openInMaps}>
           <Ionicons name="navigate-outline" size={16} color="#4D92CF" />
@@ -28,22 +27,22 @@ export default function InfoScreen() {
       </Section>
 
       <Section title={t('info.directions')}>
-        <Text style={styles.body}>{directions}</Text>
+        <Text style={styles.body}>{localize(directions)}</Text>
       </Section>
 
       <Section title={t('info.parking')}>
-        <Text style={styles.body}>{parking}</Text>
+        <Text style={styles.body}>{localize(parking)}</Text>
       </Section>
 
       <Section title={t('info.transportation')}>
-        <Text style={styles.body}>{transportation}</Text>
+        <Text style={styles.body}>{localize(transportation)}</Text>
       </Section>
 
       <Section title={t('info.accommodation')}>
         {accommodation.map((hotel, i) => (
           <View key={i} style={styles.hotelRow}>
             <Text style={styles.hotelName}>{hotel.name}</Text>
-            <Text style={styles.body}>{hotel.description}</Text>
+            <Text style={styles.body}>{localize(hotel.description)}</Text>
           </View>
         ))}
       </Section>
@@ -59,24 +58,24 @@ export default function InfoScreen() {
       </Section>
 
       <Section title={t('info.catering')}>
-        <Text style={styles.body}>{catering}</Text>
+        <Text style={styles.body}>{localize(catering)}</Text>
       </Section>
 
       <Section title={t('info.instructions')}>
-        {instructions.map((line, i) => (
+        {localize(instructions).map((line, i) => (
           <Text key={i} style={styles.bullet}>• {line}</Text>
         ))}
       </Section>
 
       <Section title={t('info.additionalInfo')}>
-        <Text style={styles.body}>{additionalInfo}</Text>
+        <Text style={styles.body}>{localize(additionalInfo)}</Text>
       </Section>
 
       <Section title={t('info.materials')}>
-        {MATERIALS.map((m) => (
+        {materials.map((m) => (
           <TouchableOpacity key={m.id} style={styles.materialRow} onPress={() => Linking.openURL(m.url)}>
             <Ionicons name="document-text-outline" size={20} color="#4D92CF" />
-            <Text style={styles.materialText}>{m.title}</Text>
+            <Text style={styles.materialText}>{localize(m.title)}</Text>
           </TouchableOpacity>
         ))}
       </Section>

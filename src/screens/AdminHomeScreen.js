@@ -4,10 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
 
 const ITEMS = [
+  { key: 'ManageEvent', icon: 'flag-outline', i18nKey: 'manageEvent' },
   { key: 'ManageParticipants', icon: 'people-circle-outline', i18nKey: 'manageParticipants' },
   { key: 'ManageProgram', icon: 'calendar-outline', i18nKey: 'manageProgram' },
   { key: 'ManageSpeakers', icon: 'people-outline', i18nKey: 'manageSpeakers' },
   { key: 'ManageOrgInfo', icon: 'information-circle-outline', i18nKey: 'manageOrgInfo' },
+  { key: 'ManageMaterials', icon: 'document-text-outline', i18nKey: 'manageMaterials' },
+  { key: 'ManageSponsors', icon: 'pricetags-outline', i18nKey: 'manageSponsors' },
   { key: 'ManageAnnouncements', icon: 'megaphone-outline', i18nKey: 'manageAnnouncements' },
   { key: 'CheckInScanner', icon: 'qr-code-outline', i18nKey: 'checkInScanner' },
 ];

@@ -21,7 +21,7 @@ const emptyForm = {
 };
 
 export default function ParticipantEditorModal({ visible, initialAccount, sessions, error, onCancel, onSave }) {
-  const { t } = useApp();
+  const { t, localize, language } = useApp();
   const [form, setForm] = useState(emptyForm);
   const isEditing = !!initialAccount;
 
@@ -36,9 +36,9 @@ export default function ParticipantEditorModal({ visible, initialAccount, sessio
   }, [visible, initialAccount]);
 
   const sessionsByDay = useMemo(() => {
-    const days = [...new Set(sessions.map((s) => s.day))];
-    return days.map((day) => ({ day, items: sessions.filter((s) => s.day === day) }));
-  }, [sessions]);
+    const days = [...new Set(sessions.map((s) => localize(s.day)))];
+    return days.map((day) => ({ day, items: sessions.filter((s) => localize(s.day) === day) }));
+  }, [sessions, language]);
 
   const setField = (field) => (value) => setForm((f) => ({ ...f, [field]: value }));
 
@@ -129,7 +129,7 @@ export default function ParticipantEditorModal({ visible, initialAccount, sessio
                 {group.items.map((s) => (
                   <CheckboxRow
                     key={s.id}
-                    label={`${s.startTime} · ${s.title}`}
+                    label={`${s.startTime} · ${localize(s.title)}`}
                     checked={form.sessionIds.includes(s.id)}
                     onPress={() => toggleSession(s.id)}
                   />

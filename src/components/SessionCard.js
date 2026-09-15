@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
 
 export default function SessionCard({ session, onPress, isFavorite, onToggleFavorite }) {
-  const { speakers, currentUser, t } = useApp();
+  const { speakers, currentUser, t, localize } = useApp();
   const speakerNames = session.speakerIds
     .map((id) => speakers.find((s) => s.id === id)?.name)
     .filter(Boolean)
@@ -19,7 +19,7 @@ export default function SessionCard({ session, onPress, isFavorite, onToggleFavo
       </View>
       <View style={styles.body}>
         <View style={styles.titleRow}>
-          <Text style={styles.title} numberOfLines={2}>{session.title}</Text>
+          <Text style={styles.title} numberOfLines={2}>{localize(session.title)}</Text>
           {onToggleFavorite && (
             <TouchableOpacity onPress={onToggleFavorite} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
               <Ionicons
@@ -30,7 +30,7 @@ export default function SessionCard({ session, onPress, isFavorite, onToggleFavo
             </TouchableOpacity>
           )}
         </View>
-        <Text style={styles.meta}>{session.room} · {session.track}</Text>
+        <Text style={styles.meta}>{localize(session.room)} · {localize(session.track)}</Text>
         {!!speakerNames && <Text style={styles.speakers}>{speakerNames}</Text>}
         <View style={styles.badgeRow}>
           {isSignedUp && (

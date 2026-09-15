@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useApp } from '../context/AppContext';
 
 export default function SpeakerCard({ speaker, onPress }) {
+  const { localize } = useApp();
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <Image source={{ uri: speaker.photo }} style={styles.avatar} />
       <View style={{ flex: 1 }}>
         <Text style={styles.name}>{speaker.name}</Text>
-        <Text style={styles.title} numberOfLines={2}>{speaker.title}</Text>
+        <Text style={styles.title} numberOfLines={2}>{localize(speaker.title)}</Text>
       </View>
     </TouchableOpacity>
   );

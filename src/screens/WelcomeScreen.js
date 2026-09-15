@@ -1,19 +1,18 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import { EVENT } from '../data/event';
 import { useApp } from '../context/AppContext';
 
 const AIR_DEFENCE_LOGO = require('../../assets/department-of-air-defence-logo.png');
 
 export default function WelcomeScreen({ navigation }) {
-  const { t } = useApp();
+  const { t, localize, event } = useApp();
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View>
-          <Text style={styles.eventName}>{EVENT.name}</Text>
-          <Text style={styles.eventMeta}>{EVENT.dates} · {EVENT.location}</Text>
-          <Text style={styles.tagline}>{EVENT.tagline}</Text>
+          <Text style={styles.eventName}>{event.name}</Text>
+          <Text style={styles.eventMeta}>{localize(event.dates)} · {localize(event.location)}</Text>
+          <Text style={styles.tagline}>{localize(event.tagline)}</Text>
         </View>
 
         <Image source={AIR_DEFENCE_LOGO} style={styles.sponsorLogo} resizeMode="contain" />

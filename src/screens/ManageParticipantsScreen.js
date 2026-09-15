@@ -9,7 +9,7 @@ import { exportParticipantsLocally } from '../utils/export';
 const ROLE_FILTERS = ['All', 'Attendee', 'Speaker', 'Press', 'Organizer'];
 
 export default function ManageParticipantsScreen() {
-  const { hasAdminAccess, accounts, sessions, deleteAccount, registerAccount, updateAccount, t } = useApp();
+  const { hasAdminAccess, accounts, sessions, deleteAccount, registerAccount, updateAccount, t, localize, language } = useApp();
   const [query, setQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -30,7 +30,10 @@ export default function ManageParticipantsScreen() {
     });
   }, [accounts, query, roleFilter]);
 
-  const sessionTitleById = useMemo(() => Object.fromEntries(sessions.map((s) => [s.id, s.title])), [sessions]);
+  const sessionTitleById = useMemo(
+    () => Object.fromEntries(sessions.map((s) => [s.id, localize(s.title)])),
+    [sessions, language]
+  );
 
   const confirmDelete = () => {
     if (deleteTarget) deleteAccount(deleteTarget.email);
@@ -40,7 +43,7 @@ export default function ManageParticipantsScreen() {
   const onExport = async () => {
     setExporting(true);
     setExportMessage('');
-    const result = await exportParticipantsLocally(filtered, sessions, 'participants.csv', t('manageParticipants.exportDialogTitle'));
+    const result = await exportParticipantsLocally(filtered, sessions, 'participants.csv', t('manageParticipants.exportDialogTitle'), localize);
     setExporting(false);
     setExportMessage(
       result.success

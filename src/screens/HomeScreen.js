@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useApp } from '../context/AppContext';
-import { EVENT } from '../data/event';
 import AnnouncementCard from '../components/AnnouncementCard';
 import ConfirmModal from '../components/ConfirmModal';
 
 export default function HomeScreen({ navigation }) {
-  const { currentUser, isAdminSession, announcements, logout, t } = useApp();
+  const { currentUser, isAdminSession, announcements, logout, t, localize, event } = useApp();
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const confirmLogout = () => {
@@ -16,9 +15,9 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
-      <Text style={styles.eventName}>{EVENT.name}</Text>
-      <Text style={styles.eventMeta}>{EVENT.dates} · {EVENT.location}</Text>
-      <Text style={styles.tagline}>{EVENT.tagline}</Text>
+      <Text style={styles.eventName}>{event.name}</Text>
+      <Text style={styles.eventMeta}>{localize(event.dates)} · {localize(event.location)}</Text>
+      <Text style={styles.tagline}>{localize(event.tagline)}</Text>
 
       {isAdminSession ? (
         <View style={styles.adminCard}>

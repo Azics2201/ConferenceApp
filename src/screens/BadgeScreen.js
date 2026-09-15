@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 import QRCodeBadge from '../components/QRCodeBadge';
 
 export default function BadgeScreen() {
-  const { currentUser, sessions, t } = useApp();
+  const { currentUser, sessions, t, localize } = useApp();
 
   if (!currentUser) {
     return (
@@ -31,8 +31,8 @@ export default function BadgeScreen() {
           <Text style={styles.sectionLabel}>{t('badge.yourSessions')}</Text>
           {mySessions.map((s) => (
             <View key={s.id} style={styles.sessionRow}>
-              <Text style={styles.sessionTitle}>{s.title}</Text>
-              <Text style={styles.sessionMeta}>{s.day} · {s.startTime}–{s.endTime} · {s.room}</Text>
+              <Text style={styles.sessionTitle}>{localize(s.title)}</Text>
+              <Text style={styles.sessionMeta}>{localize(s.day)} · {s.startTime}–{s.endTime} · {localize(s.room)}</Text>
             </View>
           ))}
         </View>
